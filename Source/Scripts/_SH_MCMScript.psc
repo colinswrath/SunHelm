@@ -89,7 +89,7 @@ int DEFAULT_DETAILED
 int DEFAULT_DETAILED1LINE
 int DEFAULT_DEATH
 int DEFAULT_PAUSECOMBAT
-int DEFAULT_COLDRATE
+float DEFAULT_COLDRATE
 int DEFAULT_HUNGERRATE
 int DEFAULT_THIRSTRATE
 int DEFAULT_FATIGUERATE
@@ -386,7 +386,7 @@ Function SetDefaultValues()
     DEFAULT_DETAILED1LINE = _SHContinuance1Line.GetValue() as int
     DEFAULT_DEATH = _SHNeedsDeath.GetValue() as int
     DEFAULT_PAUSECOMBAT = _SHPauseNeedsCombat.GetValue() as int
-    DEFAULT_COLDRATE = _SHRateGoal.GetValue() as int
+    DEFAULT_COLDRATE = _SHRateGoal.GetValue()
     DEFAULT_HUNGERRATE = _SHHungerRate.GetValue() as int
     DEFAULT_THIRSTRATE = _SHThirstRate.GetValue() as int
     DEFAULT_FATIGUERATE = _SHFatigueRate.GetValue() as int
@@ -878,7 +878,7 @@ STATE COLDRATE
 
 	Event OnDefaultST()
 		_SHRateGoal.SetValue(DEFAULT_COLDRATE)
-		SetSliderOptionValueST(DEFAULT_COLDRATE as int)
+		SetSliderOptionValueST(DEFAULT_COLDRATE)
 	EndEvent
 
     Event OnHighlightST()  
