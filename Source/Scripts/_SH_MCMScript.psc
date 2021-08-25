@@ -315,9 +315,7 @@ Event OnPageReset(string page)
             if(_SHCampfireSkillTreeInstalled.GetValue() == 1.0)
                 AddHeaderOption("$SurvRespec")
                 AddTextOptionST("RESPECSKILL","$RespecSkillPoints", "")
-                restoreFlag = OPTION_FLAG_DISABLED
-                AddToggleOptionST("RESTORE","$RestSkillProg", false)
-                AddSliderOptionST("RESTORESLIDER","$PointsToRestore", 0, "{0}", restoreFlag)
+                AddSliderOptionST("RESTORESLIDER","$PointsToRestore", 0, "{0}")
             else
                 AddHeaderOption("$EnableCampfireSkillToView",OPTION_FLAG_DISABLED)
             endif
@@ -328,7 +326,7 @@ Event OnPageReset(string page)
             if(_SHForceDisableCold.GetValue() == 0)
                 AddHeaderOption("$Cold")
                 AddToggleOptionST("TOGGLECOLD","$ToggleCold", !(_SHColdShouldBeDisabled.GetValue() as bool))
-                AddSliderOptionST("COLDRATE","$ColdRate", _SHRateGoal.GetValue())
+                AddSliderOptionST("COLDRATE","$ColdRate", _SHRateGoal.GetValue(),"{1}")
                 AddToggleOptionST("COLDWIDGET","$ToggleColdWidget", !_SHHideColdWidget.GetValue())
                 AddToggleOptionST("COLDFX","$ColdEffects", _SHColdFX.GetValue())
                 AddToggleOptionST("SEASONS", "$Seasons", _SHSeasonsEnabled.GetValue())
@@ -867,13 +865,13 @@ STATE COLDRATE
     Event OnSliderOpenST()
         SetSliderDialogStartValue(_SHRateGoal.GetValue())
 		SetSliderDialogDefaultValue(DEFAULT_COLDRATE)
-		SetSliderDialogRange(0, 3.0)
+		SetSliderDialogRange(0.0, 3.0)
         SetSliderDialogInterval(0.1)
 	EndEvent
 
 	Event OnSliderAcceptST(float value)
         _SHRateGoal.SetValue(value)
-		SetSliderOptionValueST(value)
+		SetSliderOptionValueST(value, "{1}")
 	EndEvent
 
 	Event OnDefaultST()
@@ -1018,20 +1016,24 @@ STATE RESTORESLIDER
     EndEvent
 
     Event OnSliderAcceptST(float value)
-        GlobalVariable _SHPerkPoints = Game.GetFormFromFile(0x00000801, "SunHelmCampfireSkill.esp") as GlobalVariable
 
-        if(_SHPerkPoints)
+        if ShowMessage("$OptionIntended")
+            ShowMessage("$SelectTotalNumber")
 
-            GlobalVariable _SHPerkPointsEarned = Game.GetFormFromFile(0x00000802, "SunHelmCampfireSkill.esp") as GlobalVariable
-            GlobalVariable _SHPerkPointsProgress = Game.GetFormFromFile(0x00000800, "SunHelmCampfireSkill.esp") as GlobalVariable
-
-            _SHPerkPointsProgress.SetValue(0.0)
-            _SHPerkPoints.SetValue(value)
-            _SHPerkPointsEarned.SetValue(value)
-            ClearSurvivalPerks()
-            ShowMessage("$SkillPtsRestored", false)
-            restoreFlag = OPTION_FLAG_DISABLED
-            ;SetToggleOptionValue(SurvivalRestore, false)
+            GlobalVariable _SHPerkPoints = Game.GetFormFromFile(0x00000801, "SunHelmCampfireSkill.esp") as GlobalVariable
+            
+            if(_SHPerkPoints)
+                
+                GlobalVariable _SHPerkPointsEarned = Game.GetFormFromFile(0x00000802, "SunHelmCampfireSkill.esp") as GlobalVariable
+                GlobalVariable _SHPerkPointsProgress = Game.GetFormFromFile(0x00000800, "SunHelmCampfireSkill.esp") as GlobalVariable
+                
+                _SHPerkPointsProgress.SetValue(0.0)
+                _SHPerkPoints.SetValue(value)
+                _SHPerkPointsEarned.SetValue(value)
+                ClearSurvivalPerks()
+                ShowMessage("$SkillPtsRestored", false)
+                ;SetToggleOptionValue(SurvivalRestore, false)
+            endif
         endif
 	EndEvent
 
@@ -1199,22 +1201,6 @@ STATE RESPECSKILL
 
     Event OnHighlightST()  
         SetInfoText("$SHSurvRespecDesc")
-    EndEvent
-ENDSTATE
-
-;TODO FINISH
-STATE RESTORE
-    Event OnSelectST()
-        if ShowMessage("$OptionIntended")
-            ShowMessage("$SelectTotalNumber")
-
-            SetToggleOptionValueST(true , true)
-            restoreFlag = OPTION_FLAG_NONE
-        endif
-    EndEvent
-
-    Event OnHighlightST()  
-
     EndEvent
 ENDSTATE
 

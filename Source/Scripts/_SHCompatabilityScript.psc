@@ -625,7 +625,11 @@ bool Function Frostfall()
 			_SHAlcoholList.AddForm(strBrew1)	;Strong brew1
 			_SHAlcoholList.AddForm(Game.GetFormFromFile(0x0001CEBF,"Frostfall.esp")) ;Strong brew 2
 			_SHAlcoholList.AddForm(Game.GetFormFromFile(0x0001CEC1,"Frostfall.esp")) ;Strong brew 3
-
+			_SHFoodIgnoreList.AddForm(Game.GetFormFromFile(0x00062FEC,"Frostfall.esp"))	;Frostbite ingestible
+			_SHFoodIgnoreList.AddForm(Game.GetFormFromFile(0x00066B5F,"Frostfall.esp")) ;Frostbite ingestible
+			_SHFoodIgnoreList.AddForm(Game.GetFormFromFile(0x00068121,"Frostfall.esp")) ;Frostbite ingestible
+			_SHFoodIgnoreList.AddForm(Game.GetFormFromFile(0x00068123,"Frostfall.esp")) ;Frostbite ingestible
+			_SHFoodIgnoreList.AddForm(Game.GetFormFromFile(0x00068125,"Frostfall.esp")) ;Frostbite ingestible
 		EndIf
 		return true
 	endif

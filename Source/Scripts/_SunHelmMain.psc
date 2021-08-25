@@ -291,39 +291,23 @@ Function StartMod()
         _SHEnabled.SetValue(1.0)
         Player.AddSpell(_SHPlayerSpell, false)
         _SHDialogueQuest.Start()
-        AddDrinksAndOthersToList()
         
         if(Debug.GetVersionNumber() < "1.5.97.0")
             _SHIsVR.SetValue(1.0)
         endif
+        
+        AddDrinksAndOthersToList()
+        ModStartCannibalism()
+        HandleModStartDiseases()
+        ModStartPowersPerks()
+        ModStartPlayerUpdates()
 
-        ;Auto enable cannibalism
-        if(Game.GetPlayer().GetRace() == WoodElfRace)
-            _SHCannibalism.SetValue(1)
-        Elseif(MCMCannibal)
-            ;enable cannibal if it was before
-            _SHCannibalism.SetValue(1)
-        endif
-        
-        ;Start player updates
-        _SHPlayer.stopUpdating = false
-        wasInOblivion = false
-        _SHPlayer.Update()
-        
-        AddPowers()
-        Player.AddPerk(_SHCannibalPerks)   
-        Player.AddPerk(_SHMiscActivations)
-               
         if(!introMessageShown)
             Utility.Wait(1)     
             introMessageShown = true
         endif
         
-        if(!Vampire)
-            StartSystems()
-        else
-            VampireChangeNeeds(_SHVampireNeedsOption.GetValue() as int)
-        endif
+        ModStartVampire()
 
         _SHStart.SetStage(20)
     EndIf
@@ -337,6 +321,7 @@ Function StopMod()
         _SHEnabled.SetValue(0)
         _SHPlayer.stopUpdating = true
         _SHDialogueQuest.Stop()
+        HandleModStopDiseases()
         RemovePowersAndEffects()
         StopSystems()
         Player.RemovePerk(_SHCannibalPerks)
@@ -345,6 +330,53 @@ Function StopMod()
     Else
         Debug.Notification("SunHelm already disabled...")
     EndIf
+EndFunction
+
+Function ModStartPowersPerks()
+    AddPowers()
+    Player.AddPerk(_SHCannibalPerks)   
+    Player.AddPerk(_SHMiscActivations)
+EndFunction
+
+Function ModStartPlayerUpdates()
+    ;Start player updates
+    _SHPlayer.stopUpdating = false
+    wasInOblivion = false
+    _SHPlayer.Update()
+EndFunction
+
+Function ModStartVampire()
+    if(!Vampire)
+        StartSystems()
+    else
+        VampireChangeNeeds(_SHVampireNeedsOption.GetValue() as int)
+    endif
+EndFunction
+
+Function ModStartCannibalism()
+    ;Auto enable cannibalism
+    if(Game.GetPlayer().GetRace() == WoodElfRace)
+        _SHCannibalism.SetValue(1)
+    Elseif(MCMCannibal)
+        ;enable cannibal if it was before
+        _SHCannibalism.SetValue(1)
+    endif
+EndFunction
+
+Function HandleModStartDiseases()
+    Quest DiseaseQuest = Game.GetFormFromFile(0x0000FB5C,"SunHelmDiseases.esp") as Quest
+    if(!DiseaseQuest.IsRunning())
+        DiseaseQuest.Start()
+    endif
+EndFunction
+
+Function HandleModStopDiseases()
+    Quest DiseaseQuest = Game.GetFormFromFile(0x0000FB5C,"SunHelmDiseases.esp") as Quest
+    if(DiseaseQuest)
+        Spell _SHCureDiseaseSpell = Game.GetFormFromFile(0x0003835D,"SunHelmDiseases.esp") as Spell
+        _SHCureDiseaseSpell.Cast(Player)
+        DiseaseQuest.Stop()
+    endif
 EndFunction
 
 Function RemovePowersAndEffects()
