@@ -261,52 +261,52 @@ bool function WarmDrinks()
 	if(Game.GetModByName("Warm Drinks.esp") != 255)
 
 		if(!WarmDrinksInstalled)
-			_SHHotBeverageList.AddForm(Game.GetFormFromFile(0x0000FB0A, "Warm Drinks.esm")) ;LeoBlueMountainTea
-			_SHDrinkList.AddForm(Game.GetFormFromFile(0x0000FB0A, "Warm Drinks.esm"))
-			_SHHotBeverageList.AddForm(Game.GetFormFromFile(0x00019D0E, "Warm Drinks.esm")) ;LeoRedMountainTea
-			_SHDrinkList.AddForm(Game.GetFormFromFile(0x00019D0E, "Warm Drinks.esm"))
-			_SHHotBeverageList.AddForm(Game.GetFormFromFile(0x00019D11, "Warm Drinks.esm")) ;LeoPurpleMountainTea
-			_SHDrinkList.AddForm(Game.GetFormFromFile(0x00019D11, "Warm Drinks.esm"))
-			_SHHotBeverageList.AddForm(Game.GetFormFromFile(0x0001EE13, "Warm Drinks.esm")) ;LeoElvenCoffee
-			_SHDrinkList.AddForm(Game.GetFormFromFile(0x0001EE13, "Warm Drinks.esm"))
-			_SHHotBeverageList.AddForm(Game.GetFormFromFile(0x00023F16, "Warm Drinks.esm")) ;LeoDarkElvenCoffee
-			_SHDrinkList.AddForm(Game.GetFormFromFile(0x00023F16, "Warm Drinks.esm")) 
-			_SHHotBeverageList.AddForm(Game.GetFormFromFile(0x00029018, "Warm Drinks.esm")) ;LeoNordicCoffee
-			_SHDrinkList.AddForm(Game.GetFormFromFile(0x00029018, "Warm Drinks.esm"))
-			_SHHotBeverageList.AddForm(Game.GetFormFromFile(0x00029019, "Warm Drinks.esm")) ;LeoNordicBlueMountainTea
-			_SHDrinkList.AddForm(Game.GetFormFromFile(0x00029019, "Warm Drinks.esm"))
-			_SHHotBeverageList.AddForm(Game.GetFormFromFile(0x0002901D, "Warm Drinks.esm")) ;LeoNordicPurpleMountainTea
-			_SHDrinkList.AddForm(Game.GetFormFromFile(0x0002901D, "Warm Drinks.esm"))
-			_SHHotBeverageList.AddForm(Game.GetFormFromFile(0x00029021, "Warm Drinks.esm")) ;SummerRedMountainTea
-			_SHDrinkList.AddForm(Game.GetFormFromFile(0x00029021, "Warm Drinks.esm"))
-			_SHHotBeverageList.AddForm(Game.GetFormFromFile(0x00029023, "Warm Drinks.esm")) ;SummerPurpleMountainTea
-			_SHDrinkList.AddForm(Game.GetFormFromFile(0x00029023, "Warm Drinks.esm"))
-			_SHHotBeverageList.AddForm(Game.GetFormFromFile(0x00029025, "Warm Drinks.esm")) ;SweetenedBlue
-			_SHDrinkList.AddForm(Game.GetFormFromFile(0x00029025, "Warm Drinks.esm"))
-			_SHHotBeverageList.AddForm(Game.GetFormFromFile(0x00029027, "Warm Drinks.esm")) ;SweetenedRed
-			_SHDrinkList.AddForm(Game.GetFormFromFile(0x00029027, "Warm Drinks.esm"))
-			_SHHotBeverageList.AddForm(Game.GetFormFromFile(0x0002902B, "Warm Drinks.esm")) ;SweetSugarTea
-			_SHDrinkList.AddForm(Game.GetFormFromFile(0x0002902B, "Warm Drinks.esm"))
-			_SHHotBeverageList.AddForm(Game.GetFormFromFile(0x0002902D, "Warm Drinks.esm")) ;CalmingBlue
-			_SHDrinkList.AddForm(Game.GetFormFromFile(0x0002902D, "Warm Drinks.esm"))
-			_SHHotBeverageList.AddForm(Game.GetFormFromFile(0x0002902F, "Warm Drinks.esm")) ;WayOfTheVoice
-			_SHDrinkList.AddForm(Game.GetFormFromFile(0x0002902F, "Warm Drinks.esm"))
-			_SHHotBeverageList.AddForm(Game.GetFormFromFile(0x00029031, "Warm Drinks.esm")) ;Ash
-			_SHDrinkList.AddForm(Game.GetFormFromFile(0x00029031, "Warm Drinks.esm"))
-			_SHHotBeverageList.AddForm(Game.GetFormFromFile(0x00029033, "Warm Drinks.esm")) ;
-			_SHDrinkList.AddForm(Game.GetFormFromFile(0x00029033, "Warm Drinks.esm"))
-			_SHHotBeverageList.AddForm(Game.GetFormFromFile(0x00029035, "Warm Drinks.esm")) ;
-			_SHDrinkList.AddForm(Game.GetFormFromFile(0x00029035, "Warm Drinks.esm"))
-			_SHHotBeverageList.AddForm(Game.GetFormFromFile(0x00029037, "Warm Drinks.esm")) ;
-			_SHDrinkList.AddForm(Game.GetFormFromFile(0x00029037, "Warm Drinks.esm"))
-			_SHHotBeverageList.AddForm(Game.GetFormFromFile(0x00029039, "Warm Drinks.esm")) ;
-			_SHDrinkList.AddForm(Game.GetFormFromFile(0x00029039, "Warm Drinks.esm"))
-			_SHHotBeverageList.AddForm(Game.GetFormFromFile(0x0002903B, "Warm Drinks.esm")) ;
-			_SHDrinkList.AddForm(Game.GetFormFromFile(0x0002903B, "Warm Drinks.esm"))
-			_SHHotBeverageList.AddForm(Game.GetFormFromFile(0x0002903D, "Warm Drinks.esm")) ;
-			_SHDrinkList.AddForm(Game.GetFormFromFile(0x0002903D, "Warm Drinks.esm"))
-			_SHHotBeverageList.AddForm(Game.GetFormFromFile(0x0006AD90, "Warm Drinks.esm")) ;
-			_SHDrinkList.AddForm(Game.GetFormFromFile(0x0006AD90, "Warm Drinks.esm"))
+			_SHHotBeverageList.AddForm(Game.GetFormFromFile(0x0000FB0A, "Warm Drinks.esp")) ;LeoBlueMountainTea
+			_SHDrinkList.AddForm(Game.GetFormFromFile(0x0000FB0A, "Warm Drinks.esp"))
+			_SHHotBeverageList.AddForm(Game.GetFormFromFile(0x00019D0E, "Warm Drinks.esp")) ;LeoRedMountainTea
+			_SHDrinkList.AddForm(Game.GetFormFromFile(0x00019D0E, "Warm Drinks.esp"))
+			_SHHotBeverageList.AddForm(Game.GetFormFromFile(0x00019D11, "Warm Drinks.esp")) ;LeoPurpleMountainTea
+			_SHDrinkList.AddForm(Game.GetFormFromFile(0x00019D11, "Warm Drinks.esp"))
+			_SHHotBeverageList.AddForm(Game.GetFormFromFile(0x0001EE13, "Warm Drinks.esp")) ;LeoElvenCoffee
+			_SHDrinkList.AddForm(Game.GetFormFromFile(0x0001EE13, "Warm Drinks.esp"))
+			_SHHotBeverageList.AddForm(Game.GetFormFromFile(0x00023F16, "Warm Drinks.esp")) ;LeoDarkElvenCoffee
+			_SHDrinkList.AddForm(Game.GetFormFromFile(0x00023F16, "Warm Drinks.esp")) 
+			_SHHotBeverageList.AddForm(Game.GetFormFromFile(0x00029018, "Warm Drinks.esp")) ;LeoNordicCoffee
+			_SHDrinkList.AddForm(Game.GetFormFromFile(0x00029018, "Warm Drinks.esp"))
+			_SHHotBeverageList.AddForm(Game.GetFormFromFile(0x00029019, "Warm Drinks.esp")) ;LeoNordicBlueMountainTea
+			_SHDrinkList.AddForm(Game.GetFormFromFile(0x00029019, "Warm Drinks.esp"))
+			_SHHotBeverageList.AddForm(Game.GetFormFromFile(0x0002901D, "Warm Drinks.esp")) ;LeoNordicPurpleMountainTea
+			_SHDrinkList.AddForm(Game.GetFormFromFile(0x0002901D, "Warm Drinks.esp"))
+			_SHHotBeverageList.AddForm(Game.GetFormFromFile(0x00029021, "Warm Drinks.esp")) ;SummerRedMountainTea
+			_SHDrinkList.AddForm(Game.GetFormFromFile(0x00029021, "Warm Drinks.esp"))
+			_SHHotBeverageList.AddForm(Game.GetFormFromFile(0x00029023, "Warm Drinks.esp")) ;SummerPurpleMountainTea
+			_SHDrinkList.AddForm(Game.GetFormFromFile(0x00029023, "Warm Drinks.esp"))
+			_SHHotBeverageList.AddForm(Game.GetFormFromFile(0x00029025, "Warm Drinks.esp")) ;SweetenedBlue
+			_SHDrinkList.AddForm(Game.GetFormFromFile(0x00029025, "Warm Drinks.esp"))
+			_SHHotBeverageList.AddForm(Game.GetFormFromFile(0x00029027, "Warm Drinks.esp")) ;SweetenedRed
+			_SHDrinkList.AddForm(Game.GetFormFromFile(0x00029027, "Warm Drinks.esp"))
+			_SHHotBeverageList.AddForm(Game.GetFormFromFile(0x0002902B, "Warm Drinks.esp")) ;SweetSugarTea
+			_SHDrinkList.AddForm(Game.GetFormFromFile(0x0002902B, "Warm Drinks.esp"))
+			_SHHotBeverageList.AddForm(Game.GetFormFromFile(0x0002902D, "Warm Drinks.esp")) ;CalmingBlue
+			_SHDrinkList.AddForm(Game.GetFormFromFile(0x0002902D, "Warm Drinks.esp"))
+			_SHHotBeverageList.AddForm(Game.GetFormFromFile(0x0002902F, "Warm Drinks.esp")) ;WayOfTheVoice
+			_SHDrinkList.AddForm(Game.GetFormFromFile(0x0002902F, "Warm Drinks.esp"))
+			_SHHotBeverageList.AddForm(Game.GetFormFromFile(0x00029031, "Warm Drinks.esp")) ;Ash
+			_SHDrinkList.AddForm(Game.GetFormFromFile(0x00029031, "Warm Drinks.esp"))
+			_SHHotBeverageList.AddForm(Game.GetFormFromFile(0x00029033, "Warm Drinks.esp")) ;
+			_SHDrinkList.AddForm(Game.GetFormFromFile(0x00029033, "Warm Drinks.esp"))
+			_SHHotBeverageList.AddForm(Game.GetFormFromFile(0x00029035, "Warm Drinks.esp")) ;
+			_SHDrinkList.AddForm(Game.GetFormFromFile(0x00029035, "Warm Drinks.esp"))
+			_SHHotBeverageList.AddForm(Game.GetFormFromFile(0x00029037, "Warm Drinks.esp")) ;
+			_SHDrinkList.AddForm(Game.GetFormFromFile(0x00029037, "Warm Drinks.esp"))
+			_SHHotBeverageList.AddForm(Game.GetFormFromFile(0x00029039, "Warm Drinks.esp")) ;
+			_SHDrinkList.AddForm(Game.GetFormFromFile(0x00029039, "Warm Drinks.esp"))
+			_SHHotBeverageList.AddForm(Game.GetFormFromFile(0x0002903B, "Warm Drinks.esp")) ;
+			_SHDrinkList.AddForm(Game.GetFormFromFile(0x0002903B, "Warm Drinks.esp"))
+			_SHHotBeverageList.AddForm(Game.GetFormFromFile(0x0002903D, "Warm Drinks.esp")) ;
+			_SHDrinkList.AddForm(Game.GetFormFromFile(0x0002903D, "Warm Drinks.esp"))
+			_SHHotBeverageList.AddForm(Game.GetFormFromFile(0x0006AD90, "Warm Drinks.esp")) ;
+			_SHDrinkList.AddForm(Game.GetFormFromFile(0x0006AD90, "Warm Drinks.esp"))
 
 		endif
 		return true

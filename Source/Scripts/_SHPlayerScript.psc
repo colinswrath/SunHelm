@@ -1,6 +1,7 @@
 Scriptname _SHPlayerScript extends ReferenceAlias  
 
 _SunHelmMain property _SHMain auto
+PRKF__SHMiscActivations_052EE749 property _SHActivations auto
 FormList property _SHAlcoholList auto
 FormList property _SHSkoomaList auto
 FormList property _ShBlackBooks auto
@@ -24,6 +25,9 @@ GlobalVariable Property _SHThirstShouldBeDisabled auto
 GlobalVariable Property _SHFatigueShouldBeDisabled auto
 GlobalVariable Property _SHColdShouldBeDisabled auto
 GlobalVariable Property _SHInnKeeperDialogue auto
+GlobalVariable Property _SHModShouldBeEnabled Auto
+GlobalVariable Property _SHBedrollSleep auto
+
 Spell property _SHBeverageWarmthSpell auto
 
 GlobalVariable property _SHColdActive auto
@@ -39,6 +43,21 @@ bool lastLichVal = false
 Actor property Player auto
 Form consumed
 
+;_SHMain.CarriageTravelled = True
+;if(_SHMain.Cold.IsRunning())
+;    _SHMain.Cold.carriageTravel = true
+;endif
+;Utility.Wait(13)
+;_SHMain.CarriageTravelled = false
+;if(_SHMain.Cold.IsRunning())
+;    _SHMain.Cold.carriageTravel = false
+;endif
+;if(_SHFirstPersonMessages.GetValue() == 1)
+;    _SHCarriageTravelFirst.Show()
+;Else
+;    _SHCarriageTravel.Show()
+;endif
+
 Event OnPlayerLoadGame()
     ;Checking for update
     RegisterForMenu("MapMenu")
@@ -53,8 +72,20 @@ Event OnPlayerLoadGame()
 
     if(_SHEnabled.GetValue() == 1.0)
         CheckNeedsDisabled()
-    endif
+    endif 
+
 EndEvent
+
+;Called if updating from 3.02. Updates the perk properties
+Function UpdateActivationPerk()
+
+    _SHActivations._SHWaterskin_1 = _SHMain._SHWaterskin_1
+    _SHActivations._SHWaterskin_2 = _SHMain._SHWaterskin_2
+    _SHActivations._SHWaterskin_3 = _SHMain._SHWaterskin_3
+    _SHActivations._SHVampireNeedsOption = _SHMain._SHVampireNeedsOption
+    _SHActivations._SHWaterskinEmpty = _SHMain._SHWaterskinEmpty
+
+EndFunction
 
 ;Event to detect alcohol and skooma
 Event OnObjectEquipped(form akBaseObject, ObjectReference akReference)  
@@ -130,6 +161,7 @@ Event OnMenuClose(String menuName)
 endevent
 
 Function CheckNeedsDisabled()
+
     If(_SHHungerShouldBeDisabled.GetValue() == 1.0)
         _SHMain.StopHunger()
     Else

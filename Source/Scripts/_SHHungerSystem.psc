@@ -128,10 +128,8 @@ Function ApplyFxGeneric()
     EndIf
 EndFunction
 
-
 ;Set appropriate system stage level
 Function GetNewSystemStage()
-
     int NewStage
     float currentLevel = _SHCurrentHungerLevel.GetValue()
 
@@ -169,7 +167,6 @@ Function GetNewSystemStage()
     EndIf
 
     CurrentHungerStage = NewStage
-
 EndFunction
 
 Function IncrementHungerLevel()
@@ -187,7 +184,8 @@ Function IncrementHungerLevel()
     float incValue = HoursPassed * _SHHungerRate.GetValue()
     incValue = incValue + (Utility.RandomFloat(-1.0,1.0) * (incValue * 0.10))
 
-    If (_SHMain.CarriageTravelled)
+    If (FastTravelled)
+        FastTravelled = false
         incValue = incValue / 2
     ElseIf(HungerWasSleeping)
         HungerWasSleeping = false

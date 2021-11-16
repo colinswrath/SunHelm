@@ -90,7 +90,6 @@ Function DetectSleepStart(float afSleepStartTime)
 EndFunction
 
 Function DetectSleepStop()
-
     SleepStopTime = Utility.GetCurrentGameTime()  
 
     float decrease = GetSleepDecreaseAmount()
@@ -273,13 +272,14 @@ Function IncrementFatigueLevel()
     
 	;Calculates the exhaustion that has been accumulated at +/-10% variability
     float incValue = HoursPassed * _SHFatigueRate.GetValue()
-    incValue = _SHCurrentFatigueLevel.GetValue() + (incValue + (Utility.RandomFloat(-1.0,1.0) * (incValue * 0.10)))
 
-    if(_SHMain.CarriageTravelled)
+    incValue = incValue + (Utility.RandomFloat(-1.0,1.0) * (incValue * 0.10))
+    if(FastTravelled)
+        FastTravelled = false
         incValue = incValue / 2
     endif
 
-    _SHCurrentFatigueLevel.SetValue(incValue)
+    _SHCurrentFatigueLevel.SetValue(_SHCurrentFatigueLevel.GetValue() + incValue)
 
     ;We dont want to go greater than the greatest possible
     if(_SHCurrentFatigueLevel.GetValue() > _SHFatigueStage5)

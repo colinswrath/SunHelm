@@ -67,6 +67,8 @@ GlobalVariable Property _SHWerewolfFeedOptions Auto
 GlobalVariable Property _SHVampireNeedsOption Auto
 GlobalVariable Property _SHInnKeeperDialogue Auto
 GlobalVariable Property _SHEatDrinkHotkey Auto
+GlobalVariable Property _SHModShouldBeEnabled Auto
+GlobalVariable Property _SHIsVampireGlobal auto
 
 Actor property PlayerRef auto
 
@@ -89,10 +91,10 @@ int DEFAULT_DETAILED
 int DEFAULT_DETAILED1LINE
 int DEFAULT_DEATH
 int DEFAULT_PAUSECOMBAT
-float DEFAULT_COLDRATE
-int DEFAULT_HUNGERRATE
-int DEFAULT_THIRSTRATE
-int DEFAULT_FATIGUERATE
+float DEFAULT_COLDRATE = 1.0
+int DEFAULT_HUNGERRATE = 10
+int DEFAULT_THIRSTRATE = 10
+int DEFAULT_FATIGUERATE = 10
 int DEFAULT_PAUSEDIALOGUE
 int DEFAULT_COLDWIDGETX
 int DEFAULT_COLDWIDGETY
@@ -105,13 +107,13 @@ int restoreFlag
 
 string Property ConfigDir
 	string Function Get()
-		return JContainers.userDirectory() + "SunHelm/"
+		return "Data/SunHelm/Config/"
 	EndFunction
 EndProperty
 
 string Property DefaultFile
 	string Function Get()
-		return "Data/SunHelm.json"
+		return "Data/SunHelm/Config/Default/SunHelm.json"
 	EndFunction
 EndProperty
 
@@ -136,6 +138,17 @@ String[] WaterskinArray
 int Function GetVersion()
     return 1
 endfunction
+
+Event OnInit()
+	parent.OnInit()
+	if JContainers.isInstalled()
+		string filePath = DefaultFile
+		if JContainers.fileExistsAtPath(filePath)
+			Debug.Trace("SunHelm - Loading default settings from JSON")
+			LoadSettings(filePath)
+		endif
+	endif
+EndEvent
 
 ;On the MCM load
 Event OnConfigInit()
@@ -1169,6 +1182,11 @@ STATE VAMPIRENEEDS
 	Event OnMenuAcceptST(int index)
 		_SHVampireNeedsOption.SetValue(index)
         SetMenuOptionValueST(VampireOptionArray[_SHVampireNeedsOption.GetValue() as int])
+
+        if(_SHIsVampireGlobal.GetValue() == 1.0) 
+            _SHMain.VampireChangeNeeds(_SHVampireNeedsOption.GetValue() as int)
+        endif
+
 	EndEvent
 
     Event OnHighlightST()  
@@ -1297,6 +1315,7 @@ endEvent
 
 Function SaveSettings(string a_path)
 	int jData = JMap.object()
+    JMap.setInt(jData, "SunHelmEnabled", _SHEnabled.GetValue() as int)
 	JMap.setInt(jData, "Animations", _SHAnimationsEnabled.GetValue() as int)
 	JMap.setInt(jData, "RefillAnimations", _SHRefillAnims.GetValue() as int)
 	JMap.setInt(jData, "DisableFastTravel", _SHDisableFT.GetValue() as int)
@@ -1322,11 +1341,14 @@ Function SaveSettings(string a_path)
 	JMap.setInt(jData, "WidgetPreset", _SHWidgetPreset.GetValue() as int)
 	JMap.setInt(jData, "WidgetXOffset", _SHWidgetXOffset.GetValue() as int)
 	JMap.setInt(jData, "WidgetYOffset", _SHWidgetYOffset.GetValue() as int)
+	JMap.setInt(jData, "ColdWidgetXOffset", _SHColdWidgetX.GetValue() as int)
+	JMap.setInt(jData, "ColdWidgetYOffset", _SHColdWidgetY.GetValue() as int)
 	JMap.setInt(jData, "Death", _SHNeedsDeath.GetValue() as int)
 	JMap.setInt(jData, "PauseOblivion", _SHPauseNeedsOblivion.GetValue() as int)
 	JMap.setInt(jData, "PauseCombat", _SHPauseNeedsCombat.GetValue() as int)
 	JMap.setInt(jData, "PauseDialogue", _SHPauseNeedsDialogue.GetValue() as int)
 	JMap.setInt(jData, "ToggleHunger", (!_SHHungerShouldBeDisabled.GetValueInt() as bool) as int)
+    JMap.setFlt(jData, "ColdRate", _SHRateGoal.GetValue())
 	JMap.setInt(jData, "HungerRate", _SHHungerRate.GetValue() as int)
 	JMap.setInt(jData, "ToggleThirst", (!_SHThirstShouldBeDisabled.GetValueInt() as bool) as int)
 	JMap.setInt(jData, "ThirstRate", _SHThirstRate.GetValue() as int)
@@ -1344,6 +1366,7 @@ EndFunction
 
 Function LoadSettings(string a_path)
     int jData = JValue.readFromFile(a_path)
+    int enabled = JMap.getInt(jData, "SunHelmEnabled")
 	int animations = JMap.getInt(jData, "Animations")
     int refill = JMap.getInt(jData, "RefillAnimations")
     int fastTravel = JMap.getInt(jData, "DisableFastTravel")
@@ -1369,11 +1392,14 @@ Function LoadSettings(string a_path)
     int widgetPreset = JMap.getInt(jData, "WidgetPreset")
     int xOffset = JMap.getInt(jData, "WidgetXOffset")
     int yOffset = JMap.getInt(jData, "WidgetYOffset")
+    int coldXOffset = JMap.getInt(jData, "ColdWidgetXOffset")
+    int coldYOffset = JMap.getInt(jData, "ColdWidgetYOffset")
     int death = JMap.getInt(jData, "Death")
     int oblivion = JMap.getInt(jData, "PauseOblivion")
     int combat = JMap.getInt(jData, "PauseCombat")
     int dialogue = JMap.getInt(jData, "PauseDialogue")
     int hunger = JMap.getInt(jData, "ToggleHunger")
+    float coldRate = JMap.getFlt(jData, "ColdRate")
     int hungerRate = JMap.getInt(jData, "HungerRate")
     int thirst = JMap.getInt(jData, "ToggleThirst")
     int thirstRate = JMap.getInt(jData, "ThirstRate")
@@ -1386,74 +1412,74 @@ Function LoadSettings(string a_path)
     int werePause = JMap.getInt(jData, "WerePauseNeeds")
     int vampireNeeds = JMap.getInt(jData, "VampireNeeds")
     int innKeeper = JMap.getInt(jData, "Innkeeper")
-
-    if animations
+    
+    if animations == 0 || animations == 1 
 		_SHAnimationsEnabled.SetValue(animations)
 	endif
-    if refill
+    if refill == 0 || refill == 1 
         _SHRefillAnims.SetValue(refill)
     endif
-    if fastTravel
+    if fastTravel == 0 || fastTravel == 1 
         _SHDisableFT.SetValue(fastTravel)
     endif
-    if cannibal
+    if cannibal == 0 || cannibal == 1 
         _SHCannibalism.SetValue(cannibal)
     endif
-    if raw
+    if raw  == 0 || raw == 1
         _SHRawDamage.SetValue(raw)
-    endif
-    if carryWeight
+    endif 
+    if carryWeight == 0 || carryWeight == 1
         _SHCarryWeight.SetValue(carryWeight)
     endif
-    if emptyBottles
+    if emptyBottles == 0 || emptyBottles == 1
         _SHGiveBottles.SetValue(emptyBottles)
     endif
-    if waterSkin
+    if waterSkin == 0 || waterSkin == 1
         _SHWaterskinEquip.SetValue(waterSkin)
     endif
-    if skinLocation
+    if skinLocation >= 0
         _SHWaterskinLocation.SetValue(skinLocation)
     endif
-    if fillHotkey
+    if fillHotkey >= 0
         _SHFillHotKey.SetValue(fillHotkey)
     endif
-    if tutorials
+    if tutorials == 0 || tutorials == 1
         _SHTutorials.SetValue(tutorials)
     endif
-    if coldFx
+    if coldFx == 0 || coldFx == 1
         _SHColdFX.SetValue(coldFx)
     endif
-    if messages
+    if messages == 0 || messages == 1
         _SHMessagesEnabled.SetValue(messages)
     endif
-    if sounds
+    if sounds == 0 || sounds == 1
         _SHToggleSounds.SetValue(sounds)
     endif
-    if firstPerson
+    if firstPerson == 0 || firstPerson == 1
         _SHFirstPersonMessages.SetValue(firstPerson)
     endif
-    if contHotkey
+    if contHotkey >= 0
         _SHContHotKey.SetValue(contHotkey)
     endif
-    if detailedCont
+    if detailedCont == 0 || detailedCont == 1
         _SHDetailedContinuance.SetValue(detailedCont)
     endif
-    if cont1Line
+    if cont1Line == 0 || cont1Line == 1
         _SHDetailedContinuance.SetValue(cont1Line)
     endif
-    if toggleWidgets
+    if toggleWidgets == 0 || toggleWidgets == 1
         _SHToggleWidgets.SetValue(toggleWidgets)
     endif
-    if widgetOrientation
+    if widgetOrientation >= 0
         _SHWidgetOrientation.SetValue(widgetOrientation)
     endif
-    if widgetType
+    if widgetType >= 0
         _SHWidgetDisplayType.SetValue(widgetType)
     endif
-    if widgetHotkey
+    if widgetHotkey >= 0
         _SHWidgetHotKey.SetValue(widgetHotkey)
     endif
-    if widgetPreset
+    if widgetPreset >= 0
         _SHWidgetPreset.SetValue(widgetPreset)
     endif
     if xOffset
@@ -1462,58 +1488,74 @@ Function LoadSettings(string a_path)
     if yOffset
         _SHWidgetYOffset.SetValue(yOffset)
     endif
-    if death
+    if coldXOffset
+        _SHColdWidgetX.SetValue(coldXOffset)
+    endif
+    if coldYOffset
+        _SHColdWidgetY.SetValue(coldYOffset)
+    endif
+    if death == 0 || death == 1
         _SHNeedsDeath.SetValue(death)
     endif
-    if oblivion
+    if oblivion == 0 || oblivion == 1
         _SHPauseNeedsOblivion.SetValue(oblivion)
     endif
-    if combat
+    if combat == 0 || combat == 1
         _SHPauseNeedsCombat.SetValue(combat) 
     endif
-    if dialogue
+    if dialogue == 0 || dialogue == 1
         _SHPauseNeedsDialogue.SetValue(dialogue)     
     endif
-    if hunger
+    if hunger == 0 || hunger == 1
         _SHHungerShouldBeDisabled.SetValue((!hunger as bool) as int)
     endif
-    if hungerRate
+    if coldRate > 0 && coldRate <= 3.0
+        _SHRateGoal.SetValue(coldRate)
+    endif
+    if hungerRate > 0 && hungerRate <= 20
         _SHHungerRate.SetValue(hungerRate)
     endif
-    if thirst
+    if thirst == 0 || thirst == 1
         _SHThirstShouldBeDisabled.SetValue((!thirst as bool) as int)
     endif
-    if thirstRate
+    if thirstRate > 0 && hungerRate <= 20
         _SHThirstRate.SetValue(thirstRate)
     endif
-    if fatigue
+    if fatigue == 0 || fatigue == 1
         _SHFatigueShouldBeDisabled.SetValue((!fatigue as bool) as int)
     endif
-    if fatigueRate
+    if fatigueRate > 0 && fatigueRate <= 20
         _SHFatigueRate.SetValue(fatigueRate)
     endif
-    if drunk
+    if drunk == 0 || drunk == 1
         _SHDrunkSkoomaFX.SetValue(drunk)
     endif
-    if numDrinks
+    if numDrinks >= 0
         _SHNumDrinks.SetValue(numDrinks)
     endif
-    if wereFeed
+    if wereFeed >= 1 && wereFeed <= 3
         _SHWerewolfFeedOptions.SetValue(wereFeed)
     endif
-    if wereFatigue
+    if wereFatigue == 0 || wereFatigue == 1
         _SHWerewolfFatigue.SetValue(wereFatigue)
     endif
-    if werePause
+    if werePause == 0 || werePause == 1
         _SHWerewolfPauseNeeds.SetValue(werePause)
     endif
-    if vampireNeeds
+    if vampireNeeds >= 0 && vampireNeeds <= 4
         _SHVampireNeedsOption.SetValue(vampireNeeds)
+        if(_SHIsVampireGlobal.GetValue() == 1.0) 
+            _SHMain.VampireChangeNeeds(_SHVampireNeedsOption.GetValue() as int)
+        endif
     endif
-    if innkeeper
+    if innkeeper == 0 || innkeeper == 1
         _SHInnKeeperDialogue.SetValue(innkeeper)
     endif
-
+    if(enabled == 1)
+        MOD_TOGGLE_INDEX = 1
+    endif
+    ApplyModStatus()
+    
 EndFunction
 
 ;CREDIT: PARAPETS
@@ -1522,12 +1564,12 @@ Function PopulateBrowseFileEntries()
 	BrowseFileEntries = Utility.CreateStringArray(contents.Length)
 	int index = 0
 	while index < contents.Length
-		string filePath = contents[index]
-		int startIndex = StringUtil.GetLength(ConfigDir)
-		int len = StringUtil.GetLength(filePath) - StringUtil.GetLength(Ext) - startIndex
-		string fileName = StringUtil.Substring(filePath, startIndex, len)
-		BrowseFileEntries[index] = fileName
-		index += 1
+    string filePath = contents[index]
+    int startIndex = StringUtil.GetLength(ConfigDir)
+    int len = StringUtil.GetLength(filePath) - StringUtil.GetLength(Ext) - startIndex
+    string fileName = StringUtil.Substring(filePath, startIndex, len)
+    BrowseFileEntries[index] = fileName
+    index += 1
 	endwhile
 EndFunction
 

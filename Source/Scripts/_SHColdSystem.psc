@@ -112,7 +112,6 @@ Int temperatureLevelWarmArea = 2
 bool property startup = false auto
 bool newAmbientTemp = false
 bool property waitForColdSleepCheck = false auto
-bool property carriageTravel = false auto
 
 bool property flameCloak = false auto
 bool wasWarm = false
@@ -140,7 +139,7 @@ Float Property ColdPerUpdate
     float Function Get()
         float coldPerSecond
         ;5400 -> 4800
-        float secondsGoal = (4800)/ TimeScale.GetValue()
+        float secondsGoal = (5400)/ TimeScale.GetValue()
         coldPerSecond = _SHAmbientTemperature.GetValue() / secondsGoal
         return (coldPerSecond * 14.994) * _SHRateGoal.GetValue()
     endfunction
@@ -150,8 +149,10 @@ Function StartSystem()
     If (!IsRunning())
         _SHColdActive.SetValue(1.0)
         parent.StartSystem()
+
         SendModEvent("_SH_WidgetColdUi")
         startup = true
+
         RegisterForSleep()
         StartSubSystems()
         _SHColdLastTimeStamp.SetValue(Utility.GetCurrentGameTime())
@@ -192,7 +193,6 @@ EndFunction
 
 Function UpdateNeed()
     _SHColdCurrentTimeStamp.SetValue(Utility.GetCurrentGameTime())
-
     if(_SHIsNearHeatSource.GetValue() == 0.0 && _SHIsInFreezingWater.GetValue() == 0.0)
         SetCurrentColdTemp()
         if(_SHInInteriorType.GetValue() == 0.0)
@@ -228,6 +228,7 @@ Function UpdateCurrentColdLevel(float warmthResistancePerc)
     if(updatesMade < 1)
         updatesMade = 1
     endif
+
     float oldColdLevel = _SHCurrentColdLevel.GetValue()
     if(oldColdLevel > CurrentColdLevelLimit as float)
         float baseHeat = 20.0
@@ -267,14 +268,18 @@ Function DecreaseColdLevel(float amount)
 EndFunction
 
 Function IncreaseColdLevel(float amount)
-    _SHCurrentColdLevel.SetValue( _SHCurrentColdLevel.GetValue() + amount)
+    
+    If(_SHCurrentColdLevel.GetValue() + amount > CurrentColdLevelLimit as float)
+        _SHCurrentColdLevel.SetValue(CurrentColdLevelLimit as float) 
+    Else
+        _SHCurrentColdLevel.SetValue( _SHCurrentColdLevel.GetValue() + amount)
+    Endif
 
-    If (carriageTravel)
+    If (FastTravelled)
+        FastTravelled = false
         if(_SHCurrentColdLevel.GetValue() > _SHColdStage3 as float)
             _SHCurrentColdLevel.SetValue(_SHColdStage3 as float)    
         endif
-    elseif(_SHCurrentColdLevel.GetValue() > CurrentColdLevelLimit as float)
-        _SHCurrentColdLevel.SetValue(CurrentColdLevelLimit as float)    
     endif
 
     ;Redundency. Cold level limit should not be over 900. But just in case, this keeps you from getting colder
@@ -290,6 +295,12 @@ EndFunction
 Function SetCurrentColdTemp()
     int tempTotal = 0
     tempTotal += _SHRegionTemperature.GetValue() as int
+
+    if(FastTravelled)
+        WeatherSys.ForceUpdate()
+    Endif
+    
+    WeatherSys.ForceUpdate()    ;TODO remove for p03's
     tempTotal += _SHWeatherTemperature.GetValue() as int
     tempTotal += CalculateNightPenalty()
 
@@ -298,6 +309,7 @@ Function SetCurrentColdTemp()
     endif
     
     _SHAmbientTemperature.SetValue(tempTotal)
+
     newAmbientTemp = OldAmbientTempLevel != _SHAmbientTemperature.GetValue() as int
     OldAmbientTempLevel = _SHAmbientTemperature.GetValue() as int
 EndFunction

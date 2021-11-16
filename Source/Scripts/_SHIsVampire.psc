@@ -1,10 +1,9 @@
 Scriptname _SHIsVampire extends ActiveMagicEffect
 
 _SunHelmMain property _SHMain auto
+_SHThirstSystem property Thirst auto
 GlobalVariable Property _SHVampireNeedsOption Auto
-
-int currentOption
-bool property VampireBeast auto
+GlobalVariable Property _SHIsVampireGlobal auto
 
 FormList property _SHVampireBlood auto
 Keyword Property Vampire auto
@@ -12,30 +11,31 @@ Keyword Property _SHBloodDrink auto
 
 Potion property DLC1BloodPotion auto
 
-_SHThirstSystem property Thirst auto
+Actor property PlayerRef auto
 
-Actor Player
+bool property LordFeedEffect auto
+
+
+Event OnEffectStart(Actor akTarget, Actor akCaster)   
+    
+    _SHIsVampireGlobal.SetValue(1.0)
+    if(LordFeedEffect)
+        RegisterForAnimationEvent(PlayerRef, "KillMoveEnd")        
+    else
+        _SHMain.VampireChangeNeeds(_SHVampireNeedsOption.GetValue() as int)    
+    endif
+    
+EndEvent
+
+Event OnAnimationEvent(ObjectReference akSource, string asEventName)
+    VampireFeedNeeds()
+EndEvent
 
 Function VampireFeedNeeds()
-
     if(Thirst.IsRunning())
         Thirst.DecreaseThirstLevel(200)
     endif
-
 EndFunction
-
-Event OnEffectStart(Actor akTarget, Actor akCaster)   
-    Player = akTarget
-
-    if(VampireBeast)
-        RegisterForAnimationEvent(akTarget, "KillMoveEnd")        
-    EndIf
-    
-    currentOption = _SHVampireNeedsOption.GetValue() as int
-    _SHMain.Vampire = true
-    _SHMain.VampireChangeNeeds(currentOption)    
-    
-EndEvent
 
 Event OnVampireFeed(Actor akTarget)
     VampireFeedNeeds()
@@ -43,7 +43,6 @@ EndEvent
 
 ;To detect blood potions
 Event OnObjectEquipped(form akBaseObject, ObjectReference akReference)
-
     if(akBaseObject as potion)
         if(akBaseObject == DLC1BloodPotion || _SHVampireBlood.HasForm(akBaseObject) || akBaseObject.HasKeyword(_SHBloodDrink))
             VampireFeedNeeds()
@@ -51,14 +50,13 @@ Event OnObjectEquipped(form akBaseObject, ObjectReference akReference)
     endif
 EndEvent
 
-Event OnAnimationEvent(ObjectReference akSource, string asEventName)
-    VampireFeedNeeds()
-EndEvent
-
 Event OnEffectFinish(Actor akTarget, Actor akCaster)
-    if(!VampireBeast && !Player.HasKeyword(Vampire))
-        _SHMain.Vampire = false
+    if(LordFeedEffect)
+        UnregisterForAnimationEvent(PlayerRef, "KillMoveEnd")
+    endif
+    
+    if(!PlayerRef.HasKeyword(Vampire) && !LordFeedEffect)
+        _SHIsVampireGlobal.SetValue(0.0)
         _SHMain.VampireChangeNeeds(4)
     endif
-
 EndEvent

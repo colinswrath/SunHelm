@@ -15,6 +15,7 @@ FormList Property _SHDrinkNoBottle auto
 GlobalVariable Property _SHAnimationsEnabled auto
 GlobalVariable Property _SHGiveBottles auto
 GlobalVariable Property _SHVampireNeedsOption Auto
+GlobalVariable Property _SHIsVampireGlobal auto
 
 Potion property _SHWaterBottleMead auto
 Potion property _SHWaterBottleWine auto
@@ -192,13 +193,13 @@ Function PlayDrinkAnimation()
 EndFunction
 ;------------------------------------------------------------------
 Function DecreaseThirst(float amount)  
-    if((!_SHMain.Vampire || _SHVampireNeedsOption.GetValue() == 3) && _ThirstSystem.IsRunning())
+    if((_SHIsVampireGlobal.GetValue() == 0  || _SHVampireNeedsOption.GetValue() == 3) && _ThirstSystem.IsRunning())
         _ThirstSystem.DecreaseThirstLevel(amount)
     endif
 EndFunction
 
 Function IncreaseThirst(float amount)  
-    if((!_SHMain.Vampire || _SHVampireNeedsOption.GetValue() == 3) && _ThirstSystem.IsRunning())
+    if((_SHIsVampireGlobal.GetValue() == 0 || _SHVampireNeedsOption.GetValue() == 3) && _ThirstSystem.IsRunning())
         _ThirstSystem.IncreaseThirstLevel(amount)
     endif
 EndFunction

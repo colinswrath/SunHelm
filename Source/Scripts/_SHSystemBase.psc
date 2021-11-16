@@ -45,6 +45,8 @@ GlobalVariable property _SHPauseNeedsDialogue auto
 GlobalVariable property _SHPauseNeedsOblivion auto   
 GlobalVariable Property _SHTutorials Auto 
 
+bool property FastTravelled = false auto
+
 bool property PauseForCombat 
     bool Function Get()
         if(Player.IsInCombat() && _SHPauseNeedsCombat.GetValue() == 1)
@@ -86,8 +88,7 @@ bool InJail = false
 
 ;Called on every fired update event
 Event OnUpdateGameTime()
-    if(!PauseForOblivion && !PauseForCombat && !PauseForDialogue)
-        
+    if(!PauseForOblivion && !PauseForCombat && !PauseForDialogue)       
         ;Jail check
         if(!InJail || !_SHMain.BeastWerewolf)
             UpdateNeed()   ;Update appropriate need

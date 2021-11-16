@@ -18,7 +18,7 @@ GlobalVariable Property _SHWidgetDisplayType Auto
 GlobalVariable Property _SHWidgetXOffset Auto
 GlobalVariable Property _SHWidgetYOffset Auto 
 
-
+bool Locked = false
 ;Functions
 
 String Function GetWidgetSource()
@@ -160,9 +160,9 @@ Function UpdateWidget()
 
 		;Color based (Alpha set to 100, change last three parameters)
 		ElseIf(_SHWidgetDisplayType.GetValue() == 1)
-			args[0] = 130
-			args[1] = 130
-			args[2] = 130
+			args[0] = 110
+			args[1] = 110
+			args[2] = 110
 			args[3] = HungerLevel
 			args[4] = ThirstLevel
 			args[5] = FatigueLevel

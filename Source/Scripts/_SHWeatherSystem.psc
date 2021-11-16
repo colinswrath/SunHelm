@@ -13,7 +13,7 @@ GlobalVariable Property _SHWeatherTemperature auto   ; intialize at 0
 
 ;TODO make these globals
 int property SnowWeatherPen = 250 auto hidden
-int property BlizzardWeatherPen = 650 auto hidden
+int property BlizzardWeatherPen = 500 auto hidden
 int property CloudySnowPen = 100 auto hidden
 int property RainWeatherPen = 50 auto hidden
 int property ClearWeatherPen = 0 auto hidden
@@ -21,7 +21,7 @@ int property ClearWeatherPen = 0 auto hidden
 Function StartSystem()
     if(!IsRunning())
         Start()
-        PO3_Events_Form.RegisterForWeatherChange(self)
+        ;PO3_Events_Form.RegisterForWeatherChange(self)
         CurrentWeather = Weather.GetCurrentWeather()
         _SHWeatherTemperature.SetValue(CalculateWeatherTemp(CurrentWeather))
     endif
@@ -29,7 +29,7 @@ EndFunction
 
 Function StopSystem()
     if(IsRunning())
-        PO3_Events_Form.UnregisterForWeatherChange(self)
+        ;PO3_Events_Form.UnregisterForWeatherChange(self)
         Stop()
     endif
 EndFunction
@@ -39,11 +39,16 @@ Event OnWeatherChange(Weather akOldWeather, Weather akNewWeather)
     _SHWeatherTemperature.SetValue(CalculateWeatherTemp(CurrentWeather))
 EndEvent
 
+Function ForceUpdate()
+    CurrentWeather = GetRealCurrentWeather()
+    _SHWeatherTemperature.SetValue(CalculateWeatherTemp(CurrentWeather))
+EndFunction
+
 int Function CalculateWeatherTemp(Weather calcWeather)
     ;Only take weather into account if you are outside
     int weatherTemp = ClearWeatherPen
     if (!PlayerRef.IsInInterior())
-        if(_SHColdCloudyWeather.HasForm(calcWeather) && (_SHCurrentRegionInt.GetValue() != 5 || _SHCurrentRegionInt.GetValue() != 9))
+        if(_SHColdCloudyWeather.HasForm(calcWeather) && (_SHCurrentRegionInt.GetValue() != 5 && _SHCurrentRegionInt.GetValue() != 9))
             weatherTemp = CloudySnowPen
         else
             Int weatherClass = -1   ;None

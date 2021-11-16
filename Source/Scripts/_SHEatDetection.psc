@@ -40,6 +40,7 @@ GlobalVariable Property _SHAnimationsEnabled auto
 GlobalVariable property _SHRawDamage auto
 GlobalVariable property _SHColdActive auto
 GlobalVariable Property _SHVampireNeedsOption Auto
+GlobalVariable Property _SHIsVampireGlobal Auto
 
 spell property _SHSoupWarmthSpell auto
 Spell property _SHFoodPoisoningSpell auto
@@ -94,15 +95,13 @@ Event OnObjectEquipped(form akBaseObject, ObjectReference akReference)
     EndIf
 EndEvent
 
-;Functions
-
 ;Checks for food, and decreases if it is
 Function FoodCheck()
 
     bool playAnim = false
-    if(!_SHMain.Vampire || _SHVampireNeedsOption.GetValue() == 3)
+    if(_SHIsVampireGlobal.GetValue() == 0.0 || _SHVampireNeedsOption.GetValue() == 3)
         
-        ;Werewolfs in human form,vampires, and wood elves can eat raw meat
+        ;Werewolfs in human form, and wood elves can eat raw meat
         if(IsConsumedRawItem && _SHRawDamage.GetValue() == 1 && !ImmuneFoodPoisoning)              
             if(_SHDiseasesEnabled.GetValue() == 1)
                 if(Utility.RandomInt(0,100) < 30)

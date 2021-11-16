@@ -35,6 +35,9 @@ GlobalVariable Property _SHContinuance1Line auto
 GlobalVariable Property _SHDetailedContinuance auto
 GlobalVariable Property _SHVampireNeedsOption Auto
 GlobalVariable Property _SHNumDrinks Auto
+GlobalVariable Property _SHIsVampireGlobal auto
+
+GlobalVariable Property _SHIsInWater auto
 
 GlobalVariable Property _SHIsVR auto
 
@@ -95,6 +98,7 @@ MiscObject property _SHEmptyWineMisc auto
 MiscObject property _SHEmptySujammaMisc auto
 
 bool property SkyrimVR auto
+bool startup = false
 
 Sound property _SHDrink auto
 Sound property _SHFillWaterM auto
@@ -102,19 +106,20 @@ Sound property _SHFillWaterM auto
 ;bools
 Bool Property InWater
 	Bool Function Get()
-		Return PO3_SKSEFunctions.IsActorInWater(Player)
+        if _SHIsInWater.GetValue() == 1.0
+            return true
+        else
+            return false
+        endif
+		;Return PO3_SKSEFunctions.IsActorInWater(Player)
 	EndFunction
 EndProperty
 
 bool property SKSEInstalled = false auto
 bool property BeastWerewolf auto
 bool property HumanWerewolf auto
-;bool property WerewolfFatigue = true auto
-;bool property WerewolfPauseNeeds = true auto
-bool property Vampire auto
 bool property VampireThirst = true auto
 bool property CampfireInstalled = false auto
-bool property CarriageTravelled auto
 bool property introMessageShown = false auto
 bool property MCMCannibal = false auto
 bool property HasFoodPoison = false auto
@@ -131,14 +136,6 @@ Perk property _SHMiscActivations auto
 
 ;Widget Properties
 Float property WidgetAlphaLevel = 100.00 auto
-;bool property HideWidgets = false auto
-;int property Orientation = 1 auto
-;int property WidgetX = 1175 auto
-;int property WidgetY = 721 auto
-;int property DisplayType = 1 auto
-;int property WerewolfFeedOptions = 1 auto
-;int property VampireNeedsOption = 0 auto
-;int property _SHNumDrinks = 3 auto
 int property _SHDrinksConsumed auto
 
 Idle Property idlepickup_ground Auto
@@ -174,7 +171,6 @@ bool property isInOblivion auto
 FormList property _SHOblivionWorlds auto
 FormList property _SHOblivionLctns auto
 FormList property _SHOblivionCells auto
-;bool property pauseNeedsInOblivion = true auto
 bool property wasInOblivion = false auto
 bool lockSurvival = false
 bool progress25 = false
@@ -231,6 +227,43 @@ Event OnUpdate()
 
 endEvent
 
+Function CheckForUpdate()
+    
+    CheckGameInfo()
+    
+    ;If a mod version is set
+    if(ModVersion)
+        ;Check for update
+        if(ModVersion < 3.06)
+            Debug.Notification("SunHelm is currently updating. Please do not open the MCM.")
+
+            if(ModVersion < 3.00)
+                Debug.Notification("INCOMPATIBLE VERSION DETECTED: YOU ARE ON A 3.0.0 INCOMPATIBLE SAVE. YOU NEED A NEW GAME FOR 3.0.0+.")
+            endif       
+            
+            int alreadyEnabled = _SHEnabled.GetValue() as int
+            ;Refresh the mod
+            
+            if(alreadyEnabled == 1)
+                StopMod()
+                StartMod()
+            endif
+            
+            ;Update the activation perk
+            if(ModVersion == 3.02)
+                _SHPlayer.UpdateActivationPerk()
+            endif
+
+            ModComp.CleanLists()
+            
+            Debug.Notification("SunHelm is updated to: 3.0.6")
+        endif
+    endif
+    ModVersion = 3.06
+    
+    ModComp.CheckMods()
+EndFunction
+
 Function CheckGameInfo()
 
     Player = game.GetPlayer()
@@ -255,61 +288,32 @@ Function CheckGameInfo()
 
 EndFunction
 
-Function CheckForUpdate()
-
-    CheckGameInfo()
-
-    ;If a mod version is set
-    if(ModVersion)
-        ;Check for update
-        if(ModVersion < 3.0)
-            if(ModVersion < 3.0)
-                Debug.Notification("INCOMPATIBLE VERSION DETECTED: YOU ARE ON A 3.0.0 INCOMPATIBLE SAVE. YOU NEED A NEW GAME FOR 3.0.0+.")
-            endif
-
-            int alreadyEnabled = _SHEnabled.GetValue() as int
-            ;Refresh the mod
-            StopMod()
-            
-            if(alreadyEnabled == 1)
-                StartMod()
-            endif
-
-            ModComp.CleanLists()
-            
-            Debug.Notification("SunHelm is updated to: 3.0.0")
-        endif
-    endif
-    ModVersion = 3.0
-
-    ModComp.CheckMods()
-EndFunction
-
-;Startup for the 
 Function StartMod()
-    If (_SHEnabled.GetValue() == 0)
+    If (_SHEnabled.GetValue() == 0 && !startup)
+        Utility.Wait(5)
         _SHEnabled.SetValue(1.0)
+        startup = true
+        Player = Game.GetPlayer()
         Player.AddSpell(_SHPlayerSpell, false)
         _SHDialogueQuest.Start()
         
         if(Debug.GetVersionNumber() < "1.5.97.0")
             _SHIsVR.SetValue(1.0)
         endif
-        
         AddDrinksAndOthersToList()
         ModStartCannibalism()
-        HandleModStartDiseases()
         ModStartPowersPerks()
         ModStartPlayerUpdates()
-
-        if(!introMessageShown)
-            Utility.Wait(1)     
+        HandleModStartDiseases()
+        
+        if(!introMessageShown)    
             introMessageShown = true
         endif
         
-        ModStartVampire()
-
+        ModStartSystems()
+        
         _SHStart.SetStage(20)
+        startup = false
     EndIf
     _SHFirstTimeEnabled.SetValue(0)
 EndFunction
@@ -345,8 +349,8 @@ Function ModStartPlayerUpdates()
     _SHPlayer.Update()
 EndFunction
 
-Function ModStartVampire()
-    if(!Vampire)
+Function ModStartSystems()
+    if(_SHIsVampireGlobal.GetValue() == 0)
         StartSystems()
     else
         VampireChangeNeeds(_SHVampireNeedsOption.GetValue() as int)
@@ -515,7 +519,7 @@ Function ContinuancePower()
     string coldValString = ""
     
     if(Hunger.IsRunning())
-        hungerValString = "Hunger: %" + Hunger.GetHungerPercent()
+        hungerValString = "Hunger: " + Hunger.GetHungerPercent() + "%"
 
         int CurrentHungerStage = Hunger.CurrentHungerStage
         ;hungerString = "Hunger: "
@@ -536,7 +540,7 @@ Function ContinuancePower()
     endif
     
     if(Fatigue.IsRunning())
-        fatigueValString = "Exhaustion: %" + Fatigue.GetFatiguePercent()
+        fatigueValString = "Exhaustion: " + Fatigue.GetFatiguePercent() + "%"
 
         int CurrentFatigueStage = Fatigue.CurrentFatigueStage
         ;fatigueString = "Exhaustion: "
@@ -558,7 +562,7 @@ Function ContinuancePower()
     endif
     
     if(Thirst.IsRunning())
-        thirstValString = "Thirst: %" + Thirst.GetThirstPercent()
+        thirstValString = "Thirst: " + Thirst.GetThirstPercent() + "%"
 
         int CurrentThirstStage = Thirst.CurrentThirstStage
         
@@ -581,7 +585,7 @@ Function ContinuancePower()
     endif
 
     if(Cold.IsRunning())
-        coldValString = "Cold: %" + ((Cold._SHCurrentColdLevel.GetValue() / 900)*100) as int
+        coldValString = "Cold: " + ((Cold._SHCurrentColdLevel.GetValue() / 900)*100) as int  + "%"
 
         int CurrentColdStage = Cold.CurrentColdStage
         ;coldString = "Cold: "
@@ -748,43 +752,27 @@ bool Function IsInSaltwater()
 endFunction
 
 Function VampireChangeNeeds(int option)
-    if(Vampire && _SHEnabled.GetValue() == 1)
+    if(_SHIsVampireGlobal.GetValue() == 1.0 && _SHEnabled.GetValue() == 1)
         if(option == 0)
             _SHColdShouldBeDisabled.SetValue(1.0)
             _SHThirstShouldBeDisabled.SetValue(1.0)
             _SHFatigueShouldBeDisabled.SetValue(1.0)
             _SHHungerShouldBeDisabled.SetValue(1.0)
-            ;StopCold()
-            ;StopFatigue()
-            ;StopHunger()
-            ;StopThirst()
         elseif(option == 1)
             _SHColdShouldBeDisabled.SetValue(1.0)
             _SHThirstShouldBeDisabled.SetValue(0.0)
             _SHFatigueShouldBeDisabled.SetValue(1.0)
             _SHHungerShouldBeDisabled.SetValue(1.0)
-            ;StopCold()
-            ;StopFatigue()
-            ;StopHunger()
-            ;StartThirst()
         Elseif(option == 2)
             _SHColdShouldBeDisabled.SetValue(1.0)
             _SHThirstShouldBeDisabled.SetValue(0.0)
             _SHFatigueShouldBeDisabled.SetValue(0.0)
             _SHHungerShouldBeDisabled.SetValue(1.0)
-            ;StopCold()
-            ;StartFatigue()
-            ;StopHunger()
-            ;StartThirst()
         ElseIf (option == 3)
             _SHColdShouldBeDisabled.SetValue(0.0)
             _SHThirstShouldBeDisabled.SetValue(0.0)
             _SHFatigueShouldBeDisabled.SetValue(0.0)
             _SHHungerShouldBeDisabled.SetValue(0.0)
-            ;StartCold()
-            ;StartFatigue()
-            ;StartHunger()
-            ;StartThirst()
         endif
     else
         if(option == 4)
@@ -792,10 +780,6 @@ Function VampireChangeNeeds(int option)
             _SHThirstShouldBeDisabled.SetValue(0.0)
             _SHFatigueShouldBeDisabled.SetValue(0.0)
             _SHHungerShouldBeDisabled.SetValue(0.0)
-            ;StartCold()
-            ;StartFatigue()
-            ;StartHunger()
-            ;StartThirst()
         endif
     endif
 EndFunction
@@ -808,20 +792,12 @@ Function LichChangeNeeds(int option)
             _SHThirstShouldBeDisabled.SetValue(1.0)
             _SHFatigueShouldBeDisabled.SetValue(1.0)
             _SHHungerShouldBeDisabled.SetValue(1.0)
-            ;StopCold()
-            ;StopFatigue()
-            ;StopHunger()
-            ;StopThirst()
         ;Mortal
         Else
             _SHColdShouldBeDisabled.SetValue(0.0)
             _SHThirstShouldBeDisabled.SetValue(0.0)
             _SHFatigueShouldBeDisabled.SetValue(0.0)
             _SHHungerShouldBeDisabled.SetValue(0.0)
-            ;StartCold()
-            ;StartFatigue()
-            ;StartHunger()
-            ;StartThirst()
         endif
     endif
 EndFunction
@@ -832,6 +808,8 @@ Function StartSystems()
     StartHunger()
     StartThirst()
     StartFatigue()
+    SendModEvent("_SH_WidgetUi") 
+    SendModEvent("_SH_WidgetColdUi")  
 EndFunction
 
 ;Stops the needs
@@ -888,26 +866,33 @@ EndFunction
 
 ;Stop functions so that other scripts may access stop functions
 Function StopThirst()
-    Thirst.StopSystem()
-    SendModEvent("_SH_UpdateWidget")
+    if(Thirst.IsRunning())
+        Thirst.StopSystem()
+        SendModEvent("_SH_UpdateWidget")
+    endif
 EndFunction
 
 Function StopHunger()
-    Hunger.StopSystem()
-    SendModEvent("_SH_UpdateWidget")
+    if(Hunger.IsRunning())
+        Hunger.StopSystem()
+        SendModEvent("_SH_UpdateWidget")
+    endif
 EndFunction
 
 Function StopFatigue()
-    Fatigue.StopSystem()
-    SendModEvent("_SH_UpdateWidget")
+    if(Fatigue.IsRunning())
+        Fatigue.StopSystem()
+        SendModEvent("_SH_UpdateWidget")
+    endif
 EndFunction
 
 Function StopCold()
-    Cold.StopSystem()
+    if(Cold.IsRunning())
+        Cold.StopSystem()
+    endif
 EndFunction
 
-Function StartCold()
-    
+Function StartCold()  
     if(_SHColdShouldBeDisabled.GetValue() == 0.0 && _SHForceDisableCold.GetValue() == 0.0)
         Cold.StartSystem()
     endif

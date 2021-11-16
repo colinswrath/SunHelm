@@ -83,9 +83,9 @@ int property CurrentRegion
             return 2
         ElseIf (pineRegion)     ;Pine Freezing region
             return 3
-        elseif(comfRegion || highHrothgarRegion)    ;Riverwood
+        elseif(comfRegion)    ;Riverwood
             return 4
-        elseif(freezingRegion)
+        elseif(freezingRegion || highHrothgarRegion)
             return 5
         ElseIf (reachRegion)
             return 6

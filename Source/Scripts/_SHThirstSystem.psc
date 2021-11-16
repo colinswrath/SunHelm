@@ -40,13 +40,13 @@ Sound property _SHThirstSoundsM auto
 
 GlobalVariable Property _SHThirstTutEnabled auto
 GlobalVariable property _SHFirstTimeEnabled auto
+GlobalVariable property _SHWaterskinAdded auto
+GlobalVariable Property _SHIsVampireGlobal auto
 
 bool ShowNewStageMessage
 bool Increasing
 bool startUp
 bool wasQuenched = false
-
-import PO3_Events_Form
 
 ;Functions
 
@@ -57,8 +57,9 @@ Function StartSystem()
         parent.StartSystem()
         ;add water to player
         Player = game.GetPlayer()
-        If (_SHFirstTimeEnabled.GetValue() == 1)
+        If (_SHWaterskinAdded.GetValue() == 0)
             Player.AddItem(_SHMain._SHWaterskin_3, 1)
+            _SHWaterskinAdded.SetValue(1.0)
         EndIf
         CurrentThirstStage = -1
         startUp = true
@@ -187,9 +188,10 @@ Function IncrementThirstLevel()
     incValue = incValue + (Utility.RandomFloat(-1.0,1.0) * (incValue * 0.10))
 
     ;Slower vampire rate
-    if(_SHMain.Vampire)
+    if(_SHIsVampireGlobal.GetValue() == 1.0)
         incValue = incValue / 4
-    ElseIf (_SHMain.CarriageTravelled)
+    ElseIf (FastTravelled)
+        FastTravelled = false
         incValue = incValue / 2
     ElseIf(ThirstWasSleeping)
         ThirstWasSleeping = false
