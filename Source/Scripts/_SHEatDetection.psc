@@ -33,7 +33,8 @@ Keyword property _SH_MeadWATERBottleKeyword auto
 Keyword property _SH_WineWATERBottleKeyword auto
 Keyword property _SH_SujammaWATERBottleKeyword auto
 Keyword property VendorItemFoodRaw auto
-
+Keyword property _SH_AlcoholDrinkKeyword auto
+Keyword property _SHFoodIgnoreKeyword auto
 
 GlobalVariable property _SHDiseasesEnabled auto
 GlobalVariable Property _SHAnimationsEnabled auto
@@ -49,7 +50,7 @@ Message Property _SHUnknownFood Auto
 
 bool property ImmuneFoodPoisoning
     bool Function Get()
-        if(Player.HasKeyword(IsBeastRace) || Player.GetRace() == _SHMain.WoodElfRace || _SHMain.Vampire || _SHMain.HumanWerewolf)
+        if(Player.HasKeyword(IsBeastRace) || Player.GetRace() == _SHMain.WoodElfRace || _SHIsVampireGlobal.GetValue() == 1.0 || _SHMain.HumanWerewolf)
             return true
         else
             return false
@@ -59,7 +60,7 @@ EndProperty
 
 bool property CheckIgnoreCategorization
     bool Function Get()
-        if(IsConsumedRawItem || _SHDrinkList.HasForm(consumed) || _SHDrinkNoBottle.HasForm(consumed) || consumed.HasKeyword(_SH_MeadWATERBottleKeyword) || consumed.HasKeyword(_SH_SujammaWATERBottleKeyword) || consumed.HasKeyword(_SH_WineWATERBottleKeyword) || consumed.HasKeyword(_SH_DrinkKeyword) || _SHDrinkNoBottle.HasForm(consumed) || _SHAlcoholList.HasForm(consumed))
+        if(consumed.HasKeyword(_SH_AlcoholDrinkKeyword) || _SHDrinkList.HasForm(consumed) || _SHDrinkNoBottle.HasForm(consumed) || consumed.HasKeyword(_SH_MeadWATERBottleKeyword) || consumed.HasKeyword(_SH_SujammaWATERBottleKeyword) || consumed.HasKeyword(_SH_WineWATERBottleKeyword) || consumed.HasKeyword(_SH_DrinkKeyword) || _SHDrinkNoBottle.HasForm(consumed) || _SHAlcoholList.HasForm(consumed) || consumed.HasKeyword(_SHSaltWaterKeyword))
             return true
         else
             return false
@@ -91,7 +92,9 @@ Event OnObjectEquipped(form akBaseObject, ObjectReference akReference)
     If (akBaseObject as Potion && (akBaseObject as Potion).IsFood())
         Player = Game.GetPlayer()   ;TODO MAKE A PROPERTY DONT WASTE THIS TIME
         consumed = akBaseObject
-        FoodCheck()
+        if(!consumed.HasKeyword(_SHFoodIgnoreKeyword) && !_SHFoodIgnoreList.HasForm(consumed))
+            FoodCheck()
+        endif
     EndIf
 EndEvent
 
@@ -100,9 +103,9 @@ Function FoodCheck()
 
     bool playAnim = false
     if(_SHIsVampireGlobal.GetValue() == 0.0 || _SHVampireNeedsOption.GetValue() == 3)
-        
+        bool raw = IsConsumedRawItem
         ;Werewolfs in human form, and wood elves can eat raw meat
-        if(IsConsumedRawItem && _SHRawDamage.GetValue() == 1 && !ImmuneFoodPoisoning)              
+        if(raw && _SHRawDamage.GetValue() == 1 && !ImmuneFoodPoisoning)              
             if(_SHDiseasesEnabled.GetValue() == 1)
                 if(Utility.RandomInt(0,100) < 30)
                     Player.DoCombatSpellApply(_SHFoodPoisoningSpell,Player)
@@ -136,10 +139,10 @@ Function FoodCheck()
             DecreaseHunger(75)
             DecreaseThirst(20)
             playAnim = true
-        ElseIf (_SHFoodIgnoreList.HasForm(consumed))
-            return
         ElseIf(CheckIgnoreCategorization)
             _SHFoodIgnoreList.AddForm(consumed)
+            return
+        ElseIf (raw)
             return
         Else
             CheckUnknownConsumable()

@@ -239,7 +239,7 @@ Function IncreaseThirstLevel(float incAmount)
 
     ;Ensure thirst level doesn't go above value
     If (_SHCurrentThirstLevel.GetValue() > _SHThirstStage5)
-        _SHCurrentThirstLevel.SetValue(0)
+        _SHCurrentThirstLevel.SetValue(_SHThirstStage5)
     EndIf
     
     RemoveSystemEffects()   ;Remove again just to make sure

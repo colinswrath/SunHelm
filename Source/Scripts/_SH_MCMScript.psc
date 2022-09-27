@@ -1159,7 +1159,7 @@ STATE WEREFEED
     Event OnMenuOpenST()
 		SetMenuDialogOptions(WerewolfFillArray)
         SetMenuDialogStartIndex(_SHWerewolfFeedOptions.GetValue() as int)
-        SetMenuDialogDefaultIndex(3)
+        SetMenuDialogDefaultIndex(0)
 	EndEvent
 
 	Event OnMenuAcceptST(int index)

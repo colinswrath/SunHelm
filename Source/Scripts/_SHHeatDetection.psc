@@ -19,7 +19,6 @@ GlobalVariable Property _SHFirstPersonMessages auto
 GlobalVariable Property _SHCurrentRegionInt auto
 GlobalVariable Property _SHColdLevelCap auto
 
-
 GlobalVariable Property _SHFreezingTemp auto
 GlobalVariable Property _SHRegionTemperature auto
 
@@ -166,6 +165,8 @@ bool Function SearchForHeatSources()
             elseif(_SHHeatSourcesNormal.HasForm(heatSource) && distance <= _SHNormalSourceRadius.GetValue())
                 return true
             elseif(_SHHeatSourcesLarge.HasForm(heatSource))
+                return true
+            else
                 return true
             endif
         endIf

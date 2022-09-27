@@ -43,21 +43,6 @@ bool lastLichVal = false
 Actor property Player auto
 Form consumed
 
-;_SHMain.CarriageTravelled = True
-;if(_SHMain.Cold.IsRunning())
-;    _SHMain.Cold.carriageTravel = true
-;endif
-;Utility.Wait(13)
-;_SHMain.CarriageTravelled = false
-;if(_SHMain.Cold.IsRunning())
-;    _SHMain.Cold.carriageTravel = false
-;endif
-;if(_SHFirstPersonMessages.GetValue() == 1)
-;    _SHCarriageTravelFirst.Show()
-;Else
-;    _SHCarriageTravel.Show()
-;endif
-
 Event OnPlayerLoadGame()
     ;Checking for update
     RegisterForMenu("MapMenu")
@@ -162,30 +147,30 @@ endevent
 
 Function CheckNeedsDisabled()
 
-    If(_SHHungerShouldBeDisabled.GetValue() == 1.0)
-        _SHMain.StopHunger()
-    Else
-        _SHMain.StartHunger()
-    EndIf
+        If(_SHHungerShouldBeDisabled.GetValue() == 1.0)
+            _SHMain.StopHunger()
+        Else
+            _SHMain.StartHunger()
+        EndIf
 
-    If(_SHThirstShouldBeDisabled.GetValue() == 1.0)
-        _SHMain.StopThirst()
-    Else
-        _SHMain.StartThirst()
-    EndIf
+        If(_SHThirstShouldBeDisabled.GetValue() == 1.0)
+            _SHMain.StopThirst()
+        Else
+            _SHMain.StartThirst()
+        EndIf
 
-    If(_SHFatigueShouldBeDisabled.GetValue() == 1.0)
-        _SHMain.StopFatigue()
-    Else
-        _SHMain.StartFatigue()
-    EndIf
+        If(_SHFatigueShouldBeDisabled.GetValue() == 1.0)
+            _SHMain.StopFatigue()
+        Else
+            _SHMain.StartFatigue()
+        EndIf
 
-    If(_SHColdShouldBeDisabled.GetValue() == 1.0)
-        _SHMain.StopCold()
-    Else
-        _SHMain.StartCold()
-    EndIf
-
+        If(_SHColdShouldBeDisabled.GetValue() == 1.0)
+            _SHMain.StopCold()
+        Else
+            _SHMain.StartCold()
+        EndIf
+    
 EndFunction
 
 Function Update()
@@ -238,7 +223,7 @@ Function HotBeverageCheck()
 EndFunction
 
 bool Function CheckLich()
-    if(_SHLichRaceList.HasForm(Player.GetRace() as form))
+    if(_SHLichRaceList.HasForm(Player.GetRace() as form) || (_SHMain.UndeathLichPerk && Player.HasPerk(_SHMain.UndeathLichPerk)))
         return true
     else
         return false

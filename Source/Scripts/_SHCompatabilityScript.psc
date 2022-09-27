@@ -53,6 +53,7 @@ bool UndeathInstalled
 bool PathInstalled
 bool property ObsidianInstalled auto
 bool WarmDrinksInstalled
+bool CCFishingInstalled
 
 Function CleanLists()
 
@@ -92,6 +93,7 @@ Function CleanLists()
 	PathInstalled = false
 	ObsidianInstalled = false
 	WarmDrinksInstalled = false
+	CCFishingInstalled = false
 
 	doAClean = false
 
@@ -255,6 +257,96 @@ Function CheckMods()
 		endif
 	endif
 
+	if(CCFishing())
+		CCFishingInstalled = true
+	else
+		if(CCFishingInstalled)
+			CCFishingInstalled = false
+			DoAClean = true
+		endif
+	endif
+
+EndFunction
+
+bool function CCFishing()
+	if(Game.GetModByName("ccBGSSSE001-Fish.esm") != 255)
+		if(!CCFishingInstalled)
+			_SHFoodMediumList.AddForm(Game.GetFormFromFile(0x87A,"ccBGSSSE001-Fish.esm"))	;Cooked atlantic cod
+			_SHFoodMediumList.AddForm(Game.GetFormFromFile(0x87B,"ccBGSSSE001-Fish.esm"))	;Cooked Austrolebias
+			_SHFoodMediumList.AddForm(Game.GetFormFromFile(0x87C,"ccBGSSSE001-Fish.esm"))	;Cooked Bucket Fish
+			_SHFoodMediumList.AddForm(Game.GetFormFromFile(0x87D,"ccBGSSSE001-Fish.esm"))	;Cooked Cabezon
+			_SHFoodMediumList.AddForm(Game.GetFormFromFile(0x87E,"ccBGSSSE001-Fish.esm"))	;Cooked Carp
+			_SHFoodMediumList.AddForm(Game.GetFormFromFile(0x87F,"ccBGSSSE001-Fish.esm"))	;Cooked CuckooCatfish
+			_SHFoodMediumList.AddForm(Game.GetFormFromFile(0x880,"ccBGSSSE001-Fish.esm"))	;Cooked Dragonfish
+			_SHFoodMediumList.AddForm(Game.GetFormFromFile(0x881,"ccBGSSSE001-Fish.esm"))	;Cooked Flame Angelfish
+			_SHFoodMediumList.AddForm(Game.GetFormFromFile(0x882,"ccBGSSSE001-Fish.esm"))	;CookedGlass Catfish
+			_SHFoodMediumList.AddForm(Game.GetFormFromFile(0x883,"ccBGSSSE001-Fish.esm"))	;Cooked Goldfish
+			_SHFoodMediumList.AddForm(Game.GetFormFromFile(0x884,"ccBGSSSE001-Fish.esm"))	;Cooked Lyretail Anthias
+			_SHFoodMediumList.AddForm(Game.GetFormFromFile(0x885,"ccBGSSSE001-Fish.esm"))	;Cooked
+			_SHFoodMediumList.AddForm(Game.GetFormFromFile(0x886,"ccBGSSSE001-Fish.esm"))	;Cooked
+			_SHFoodMediumList.AddForm(Game.GetFormFromFile(0x887,"ccBGSSSE001-Fish.esm"))	;Cooked
+			_SHFoodMediumList.AddForm(Game.GetFormFromFile(0x888,"ccBGSSSE001-Fish.esm"))	;Cooked
+			_SHFoodMediumList.AddForm(Game.GetFormFromFile(0x88A,"ccBGSSSE001-Fish.esm"))	;Cooked
+			_SHFoodMediumList.AddForm(Game.GetFormFromFile(0x88B,"ccBGSSSE001-Fish.esm"))	;Cooked
+			_SHFoodMediumList.AddForm(Game.GetFormFromFile(0x88C,"ccBGSSSE001-Fish.esm"))	;Cooked
+			_SHFoodMediumList.AddForm(Game.GetFormFromFile(0x88D,"ccBGSSSE001-Fish.esm"))	;Cooked
+			_SHFoodMediumList.AddForm(Game.GetFormFromFile(0x88E,"ccBGSSSE001-Fish.esm"))	;Cooked
+			_SHFoodMediumList.AddForm(Game.GetFormFromFile(0x88F,"ccBGSSSE001-Fish.esm"))	;Cooked
+
+			_SHRawList.AddForm(Game.GetFormFromFile(0x890,"ccBGSSSE001-Fish.esm"))	;
+			_SHFoodMediumList.AddForm(Game.GetFormFromFile(0x890,"ccBGSSSE001-Fish.esm"))	;
+			_SHRawList.AddForm(Game.GetFormFromFile(0x891,"ccBGSSSE001-Fish.esm"))	;
+			_SHFoodMediumList.AddForm(Game.GetFormFromFile(0x891,"ccBGSSSE001-Fish.esm"))	;
+			_SHRawList.AddForm(Game.GetFormFromFile(0x896,"ccBGSSSE001-Fish.esm"))	;
+			_SHFoodMediumList.AddForm(Game.GetFormFromFile(0x896,"ccBGSSSE001-Fish.esm"))	;
+			_SHRawList.AddForm(Game.GetFormFromFile(0x897,"ccBGSSSE001-Fish.esm"))	;
+			_SHFoodMediumList.AddForm(Game.GetFormFromFile(0x897,"ccBGSSSE001-Fish.esm"))	;
+			_SHRawList.AddForm(Game.GetFormFromFile(0x898,"ccBGSSSE001-Fish.esm"))	;
+			_SHFoodMediumList.AddForm(Game.GetFormFromFile(0x898,"ccBGSSSE001-Fish.esm"))	;
+
+			_SHFoodHeavyList.AddForm(Game.GetFormFromFile(0x89A,"ccBGSSSE001-Fish.esm"))	;Cooked
+
+			_SHRawList.AddForm(Game.GetFormFromFile(0x89B,"ccBGSSSE001-Fish.esm"))	;
+			_SHFoodMediumList.AddForm(Game.GetFormFromFile(0x89B,"ccBGSSSE001-Fish.esm"))	;
+			_SHRawList.AddForm(Game.GetFormFromFile(0x89C,"ccBGSSSE001-Fish.esm"))	;
+			_SHFoodMediumList.AddForm(Game.GetFormFromFile(0x89C,"ccBGSSSE001-Fish.esm"))	;
+			_SHRawList.AddForm(Game.GetFormFromFile(0x89E,"ccBGSSSE001-Fish.esm"))	;
+			_SHFoodMediumList.AddForm(Game.GetFormFromFile(0x89E,"ccBGSSSE001-Fish.esm"))	;
+			_SHRawList.AddForm(Game.GetFormFromFile(0x8A0,"ccBGSSSE001-Fish.esm"))	;
+			_SHFoodMediumList.AddForm(Game.GetFormFromFile(0x8A0,"ccBGSSSE001-Fish.esm"))	;
+			_SHRawList.AddForm(Game.GetFormFromFile(0x8A1,"ccBGSSSE001-Fish.esm"))	;
+			_SHFoodMediumList.AddForm(Game.GetFormFromFile(0x8A1,"ccBGSSSE001-Fish.esm"))	;
+			_SHRawList.AddForm(Game.GetFormFromFile(0x8A2,"ccBGSSSE001-Fish.esm"))	;
+			_SHFoodMediumList.AddForm(Game.GetFormFromFile(0x8A2,"ccBGSSSE001-Fish.esm"))	;
+			_SHRawList.AddForm(Game.GetFormFromFile(0x8A3,"ccBGSSSE001-Fish.esm"))	;
+			_SHFoodMediumList.AddForm(Game.GetFormFromFile(0x8A3,"ccBGSSSE001-Fish.esm"))	;
+			_SHRawList.AddForm(Game.GetFormFromFile(0x8A4,"ccBGSSSE001-Fish.esm"))	;
+			_SHFoodMediumList.AddForm(Game.GetFormFromFile(0x8A4,"ccBGSSSE001-Fish.esm"))	;
+
+			_SHFoodMediumList.AddForm(Game.GetFormFromFile(0x8A5,"ccBGSSSE001-Fish.esm"))	;
+
+			_SHAlcoholList.AddForm(Game.GetFormFromFile(0xC2D,"ccBGSSSE001-Fish.esm"))	;
+			_SHWineBottleList.AddForm(Game.GetFormFromFile(0xC2D,"ccBGSSSE001-Fish.esm"))
+
+			_SHRawList.AddForm(Game.GetFormFromFile(0X0EFE,"ccBGSSSE001-Fish.esm"))	;
+
+			_SHSoupList.AddForm(Game.GetFormFromFile(0xF02,"ccBGSSSE001-Fish.esm"))	;
+			_SHSoupList.AddForm(Game.GetFormFromFile(0xF04,"ccBGSSSE001-Fish.esm"))	;
+			_SHSoupList.AddForm(Game.GetFormFromFile(0xF06,"ccBGSSSE001-Fish.esm"))	;
+			_SHSoupList.AddForm(Game.GetFormFromFile(0xF0A,"ccBGSSSE001-Fish.esm"))	;
+			_SHSoupList.AddForm(Game.GetFormFromFile(0xF0B,"ccBGSSSE001-Fish.esm"))	;
+			_SHSoupList.AddForm(Game.GetFormFromFile(0xF0C,"ccBGSSSE001-Fish.esm"))	;
+
+			_SHFoodMediumList.AddForm(Game.GetFormFromFile(0xF25,"ccBGSSSE001-Fish.esm"))	;
+
+			_SHSoupList.AddForm(Game.GetFormFromFile(0xF76,"ccBGSSSE001-Fish.esm"))	;
+			_SHSoupList.AddForm(Game.GetFormFromFile(0xF77,"ccBGSSSE001-Fish.esm"))	;
+
+			_SHFoodMediumList.AddForm(Game.GetFormFromFile(0xF78,"ccBGSSSE001-Fish.esm"))	;
+
+		endif
+		return true
+	endif
 EndFunction
 
 bool function WarmDrinks()
@@ -325,8 +417,8 @@ bool function Obsidian()
 			_SHColdCloudyWeather.AddForm(Game.GetFormFromFile(0x0010A233, "Skyrim.esm") as Weather)
 			_SHColdCloudyWeather.AddForm(Game.GetFormFromFile(0x0010A232, "Skyrim.esm") as Weather)
 			_SHColdCloudyWeather.AddForm(Game.GetFormFromFile(0x00104AB4, "Skyrim.esm") as Weather)
-			_SHColdCloudyWeather.AddForm(Game.GetFormFromFile(0x00010E0B, "Dawngaurd.esm") as Weather)
-			_SHColdCloudyWeather.AddForm(Game.GetFormFromFile(0x00010E0E, "Dawngaurd.esm") as Weather)
+			_SHColdCloudyWeather.AddForm(Game.GetFormFromFile(0x00010E0B, "Dawnguard.esm") as Weather)
+			_SHColdCloudyWeather.AddForm(Game.GetFormFromFile(0x00010E0E, "Dawnguard.esm") as Weather)
 		endif
 		return true
 	endif
@@ -362,6 +454,7 @@ bool function Undeath()
 	if (Game.GetModByName("Undeath.esp") != 255)
 		if(!UndeathInstalled)
 			_SHLichRaceList.AddForm(Game.GetFormFromFile(0x0001772a, "Undeath.esp") as Race)
+			_SHMain.UndeathLichPerk = Game.GetFormFromFile(0x003326D5, "Undeath.esp") as Perk
 		endif
 		return true
 	endIf

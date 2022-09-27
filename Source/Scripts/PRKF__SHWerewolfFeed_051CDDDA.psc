@@ -5,7 +5,7 @@ Scriptname PRKF__SHWerewolfFeed_051CDDDA Extends Perk Hidden
 ;BEGIN FRAGMENT Fragment_12
 Function Fragment_12(ObjectReference akTargetRef, Actor akActor)
 ;BEGIN CODE
-if(_SHWerewolfFeedOptions.GetValue() == 1)
+if(_SHWerewolfFeedOptions.GetValue() == 0)
     if(_SHMain.Hunger.IsRunning())
         _SHMain.Hunger.DecreaseHungerLevel(150)
     endif 
@@ -13,11 +13,11 @@ if(_SHWerewolfFeedOptions.GetValue() == 1)
     if(_SHMain.Thirst.IsRunning())
         _SHMain.Thirst.DecreaseThirstLevel(30)
     endif
-ElseIf (_SHWerewolfFeedOptions.GetValue() == 2)
+ElseIf (_SHWerewolfFeedOptions.GetValue() == 1)
     if(_SHMain.Hunger.IsRunning())
         _SHMain.Hunger.DecreaseHungerLevel(150)
     endif
-ElseIf (_SHWerewolfFeedOptions.GetValue() == 3)
+ElseIf (_SHWerewolfFeedOptions.GetValue() == 2)
     if(_SHMain.Thirst.IsRunning())
         _SHMain.Thirst.DecreaseThirstLevel(30)
     endif
