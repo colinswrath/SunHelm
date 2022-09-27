@@ -150,7 +150,8 @@ Function StartSystem()
         _SHColdActive.SetValue(1.0)
         parent.StartSystem()
 
-        SendModEvent("_SH_WidgetColdUi")
+        ColdWidget.OnWidgetReset()
+        ;SendModEvent("_SH_WidgetColdUi")
         startup = true
 
         RegisterForSleep()
@@ -163,7 +164,8 @@ EndFunction
 
 Function StopSystem()
     _SHColdActive.SetValue(0.0)
-    SendModEvent("_SH_WidgetColdUi")
+    ColdWidget.OnWidgetReset()
+    ;SendModEvent("_SH_WidgetColdUi")
     StopSubSystems()
     ImagespaceModifier.RemoveCrossFade(1.0)
     parent.StopSystem()
@@ -221,6 +223,7 @@ EndFunction
 
 ;Called to inc cold level every update
 Function UpdateCurrentColdLevel(float warmthResistancePerc)
+    
     warmthResistancePerc = 1.00 - warmthResistancePerc
     float timePassed = ((_SHColdCurrentTimeStamp.GetValue()*24) - (_SHColdLastTimeStamp.GetValue() * 24))
     int updatesMade = (timePassed / _SHUpdateInterval.GetValue()) as int
@@ -256,7 +259,7 @@ Function DecreaseColdLevel(float amount)
     if(_SHIsNearHeatSource.GetValue() == 1.0)
         coldLimit = GetCurrentWarmthLimit()
     endif
-    
+
     if(_SHCurrentColdLevel.GetValue() < coldLimit)
         _SHCurrentColdLevel.SetValue(coldLimit)
     Elseif(_SHCurrentColdLevel.GetValue() < 0.0)
@@ -299,8 +302,7 @@ Function SetCurrentColdTemp()
     if(FastTravelled)
         WeatherSys.ForceUpdate()
     Endif
-    
-    WeatherSys.ForceUpdate()    ;TODO remove for p03's
+
     tempTotal += _SHWeatherTemperature.GetValue() as int
     tempTotal += CalculateNightPenalty()
 
@@ -388,8 +390,8 @@ Function DisplayNotificationsImod(Message first, Message third, ImageSpaceModifi
         endif
     EndIf
 
-    if(_SHIsInFreezingWater.GetValue() == 0.0 && _SHColdFX.GetValue() == 1.0)
-        if(imod)
+    if(_SHIsInFreezingWater.GetValue() == 0.0)
+        if(imod && _SHColdFX.GetValue() == 1.0)
             imod.ApplyCrossFade(1.0)
         else
             ImageSpaceModifier.RemoveCrossFade(1.0)
@@ -445,7 +447,8 @@ Function SetTemperatureUI(float oldVal, float newVal, int forcedValue = 100)
         endIf
     endif
     
-    SendModEvent("_SH_UpdateColdWidget")
+    ColdWidget.UpdateWidget()
+    ;SendModEvent("_SH_UpdateColdWidget")
 EndFunction
 
 Function SetColdStage()
@@ -537,8 +540,8 @@ int Function VRCalcArmorWarmth(bool MessageRequest = false)
 
     int HeadWarmthRating = GetArmorItemWarmth(Player.GetWornForm(0x00000002) as Armor, 1)       ; Head
 	int BodyWarmthRating = GetArmorItemWarmth(Player.GetWornForm(0x00000004) as Armor, 2)       ; Body
-	int HandsWarmthRating = GetArmorItemWarmth(Player.GetWornForm(0x00000008) as Armor, 3)       ; Hands
-	int FeetWarmthRating = GetArmorItemWarmth(Player.GetWornForm(0x000000080) as Armor, 4)       ; Feet
+	int HandsWarmthRating = GetArmorItemWarmth(Player.GetWornForm(0x00000008) as Armor, 3)      ; Hands
+	int FeetWarmthRating = GetArmorItemWarmth(Player.GetWornForm(0x000000080) as Armor, 4)      ; Feet
 	int CloakWarmthRating = GetArmorItemWarmth(Player.GetWornForm(0x00010000) as Armor, 5)      ; Cloak
 
     ;Torch

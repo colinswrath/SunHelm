@@ -22,10 +22,10 @@ Event OnEffectStart(Actor akTarget, Actor akCaster)
     ElseIf (BeastWerewolf)
 
         ;Pause werewolf needs
-        if(_SHWerewolfPauseNeeds.GetValue() == 1.0)
-            _SHMain.PauseNeeds()
-            NeedsWerePaused = true
-        EndIf
+        ;if(_SHWerewolfPauseNeeds.GetValue() == 1.0)
+        ;    _SHMain.PauseNeeds()
+        ;    NeedsWerePaused = true
+        ;EndIf
 
         ;Add perk and set bools
         Player.AddPerk(WerewolfFeedPerk)
@@ -44,10 +44,10 @@ Event OnEffectFinish(Actor akTarget, Actor akCaster)
     ElseIf (BeastWerewolf)
 
         ;Unpause werewolf needs
-        if(NeedsWerePaused)
-            _SHMain.ResumeNeeds()
-            NeedsWerePaused = false
-        EndIf
+        ;if(NeedsWerePaused)
+        ;    _SHMain.ResumeNeeds()
+        ;    NeedsWerePaused = false
+        ;EndIf
       
         ;If set, increase fatigue
         if(_SHWerewolfFatigue.GetValue() == 1.0)

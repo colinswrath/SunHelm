@@ -23,7 +23,6 @@ bool Locked = false
 
 String Function GetWidgetSource()
 	Return "SunHelm/SunHelmIcons.swf"
-	;Return "SunHelm/statusicons.swf"
 EndFunction
 
 ; @overrides SKI_WidgetBase

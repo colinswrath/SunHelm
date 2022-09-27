@@ -14,7 +14,7 @@ GlobalVariable Property _SHFatigueRate Auto
 GlobalVariable Property _SHCurrentHungerLevel Auto
 GlobalVariable Property _SHCurrentThirstLevel Auto
 GlobalVariable Property _SHCurrentFatigueLevel Auto
-GlobalVariable Property _SHCurrentColdLevel Auto    ;;
+GlobalVariable Property _SHCurrentColdLevel Auto
 
 bool Property _SHWasSleeping auto hidden
 GlobalVariable Property _SHMessagesEnabled auto
@@ -43,13 +43,14 @@ GlobalVariable property _SH_PerkRank_Conviviality auto
 GlobalVariable property _SHPauseNeedsCombat auto
 GlobalVariable property _SHPauseNeedsDialogue auto
 GlobalVariable property _SHPauseNeedsOblivion auto   
-GlobalVariable Property _SHTutorials Auto 
+GlobalVariable Property _SHTutorials Auto  
+GlobalVariable property _SHWerewolfPauseNeeds auto
 
 bool property FastTravelled = false auto
 
 bool property PauseForCombat 
     bool Function Get()
-        if(Player.IsInCombat() && _SHPauseNeedsCombat.GetValue() == 1)
+        if(Player.IsInCombat() && _SHPauseNeedsCombat.GetValue() == 1.0)
             return true
         else
             return false
@@ -59,7 +60,7 @@ EndProperty
 
 bool property PauseForDialogue 
     bool Function Get()
-        if(_SHIsInDialogue.GetValue() == 1.0 && _SHPauseNeedsDialogue.GetValue() == 1)
+        if(_SHIsInDialogue.GetValue() == 1.0 && _SHPauseNeedsDialogue.GetValue() == 1.0)
             return true
         else
             return false
@@ -69,10 +70,20 @@ EndProperty
 
 bool property PauseForOblivion
     bool Function Get()
-        if(!_SHMain.isInOblivion || _SHPauseNeedsOblivion.GetValue() == 0.0)
-            return false        ;Return false if we are not in oblivion or if we have oblivion pause turned off
-        else
+        if(_SHMain.isInOblivion && _SHPauseNeedsOblivion.GetValue() == 1.0)
             return true
+        else
+            return false
+        endif
+    EndFunction
+EndProperty
+
+bool property PauseForBeastForm
+    bool Function Get()
+        if(_SHMain.BeastWerewolf && _SHWerewolfPauseNeeds.GetValue() == 1.0)
+            return true
+        else
+            return false
         endif
     EndFunction
 EndProperty
@@ -84,15 +95,10 @@ bool property ThirstWasSleeping = false auto
 
 bool InJail = false
 
-;--Local Variables--
-
-;Called on every fired update event
 Event OnUpdateGameTime()
-    if(!PauseForOblivion && !PauseForCombat && !PauseForDialogue)       
-        ;Jail check
-        if(!InJail || !_SHMain.BeastWerewolf)
-            UpdateNeed()   ;Update appropriate need
-        endif
+    bool beast = PauseForBeastForm
+    if(!PauseForOblivion && !PauseForCombat && !PauseForDialogue && !InJail && !beast)       
+        UpdateNeed()   ;Update appropriate need  
     Else
         SetTimeStamps()
     endif
@@ -102,7 +108,7 @@ EndEvent
 ;Starts up a system
 Function StartSystem() 
     Start()
-    Utility.Wait(1) ;Give the quest time to start
+    Utility.Wait(0.25)
     RegisterForSingleUpdateGameTime(_SHUpdateInterval.GetValue())
 EndFunction
 
@@ -123,7 +129,7 @@ Function ResumeUpdates()
 EndFunction
 
 Event OnStoryJail(ObjectReference akGuard, Form akCrimeGroup, Location akLocation, int aiCrimeGold)
-    InJail = true;
+    InJail = true
 EndEvent
 
 ;Fires event when the player gets out of jail
@@ -136,7 +142,6 @@ EndEvent
 
 Event OnStoryEscapeJail(Location akLocation, Form akCrimeGroup)
     SetTimeStamps()    
-
     InJail = false
 EndEvent
 
@@ -158,7 +163,6 @@ int Function Round(float number)
 EndFunction
 
 Function DisplayNotifications(Message first, Message third) 
-
     If (_SHMessagesEnabled.GetValue() == 1)
         if(_SHFirstPersonMessages.GetValue() == 1.0)              
             first.Show()
@@ -166,12 +170,10 @@ Function DisplayNotifications(Message first, Message third)
             third.Show()
         endif
     EndIf
-
 EndFunction
 
 Function ApplyFx(Sound male, Sound female)
-
-    If(_SHToggleSounds.GetValue())
+    If(_SHToggleSounds.GetValue() == 1.0)
         If (_SHIsSexMale.GetValue() == 1.0)
             male.Play(Player)
             return

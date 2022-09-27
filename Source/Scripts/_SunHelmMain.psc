@@ -103,15 +103,17 @@ bool startup = false
 Sound property _SHDrink auto
 Sound property _SHFillWaterM auto
 
+Perk property UndeathLichPerk auto
+
 ;bools
 Bool Property InWater
 	Bool Function Get()
-        if _SHIsInWater.GetValue() == 1.0
-            return true
-        else
-            return false
-        endif
-		;Return PO3_SKSEFunctions.IsActorInWater(Player)
+        ;if _SHIsInWater.GetValue() == 1.0
+        ;    return true
+        ;else
+        ;    return false
+        ;endif
+		Return PO3_SKSEFunctions.IsActorInWater(Player)
 	EndFunction
 EndProperty
 
@@ -186,7 +188,6 @@ string property NoSkyUI = "SkyUI not installed. A limited config spell can be us
 ;Oninit fires when the quest is first initialized
 ;Adds the spell and then is started with the config
 Event Oninit()
-    
     RegisterForSleep()
     RegisterForSingleUpdate(5)  
 EndEvent
@@ -234,7 +235,7 @@ Function CheckForUpdate()
     ;If a mod version is set
     if(ModVersion)
         ;Check for update
-        if(ModVersion < 3.06)
+        if(ModVersion < 3.14)
             Debug.Notification("SunHelm is currently updating. Please do not open the MCM.")
 
             if(ModVersion < 3.00)
@@ -256,10 +257,10 @@ Function CheckForUpdate()
 
             ModComp.CleanLists()
             
-            Debug.Notification("SunHelm is updated to: 3.0.6")
+            Debug.Notification("SunHelm is updated to: 3.1.3")
         endif
     endif
-    ModVersion = 3.06
+    ModVersion = 3.14
     
     ModComp.CheckMods()
 EndFunction
@@ -822,6 +823,7 @@ EndFunction
 
 ;Pause needs where they are
 Function PauseNeeds()
+    _SHColdShouldBeDisabled.SetValue(1.0)
     StopCold()
     
     if(Thirst.IsRunning())

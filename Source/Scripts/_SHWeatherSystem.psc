@@ -21,7 +21,7 @@ int property ClearWeatherPen = 0 auto hidden
 Function StartSystem()
     if(!IsRunning())
         Start()
-        ;PO3_Events_Form.RegisterForWeatherChange(self)
+        PO3_Events_Form.RegisterForWeatherChange(self)
         CurrentWeather = Weather.GetCurrentWeather()
         _SHWeatherTemperature.SetValue(CalculateWeatherTemp(CurrentWeather))
     endif
@@ -29,7 +29,7 @@ EndFunction
 
 Function StopSystem()
     if(IsRunning())
-        ;PO3_Events_Form.UnregisterForWeatherChange(self)
+        PO3_Events_Form.UnregisterForWeatherChange(self)
         Stop()
     endif
 EndFunction
